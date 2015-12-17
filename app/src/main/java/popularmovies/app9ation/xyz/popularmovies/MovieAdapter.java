@@ -7,16 +7,18 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 /**
  * Created by  Bhupendra Shekhawat on 14/12/15.
  */
-public class MoviePosterAdapter extends ArrayAdapter<MoviePoster>
+public class MovieAdapter extends ArrayAdapter<Movie>
     {
-        private static final String LOG_TAG = MoviePosterAdapter.class.getSimpleName();
+        private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
 
-        public MoviePosterAdapter(Activity context, List<MoviePoster> moviePosters){
+        public MovieAdapter(Activity context, List<Movie> moviePosters){
 
             super(context,0, moviePosters);
 
@@ -24,7 +26,10 @@ public class MoviePosterAdapter extends ArrayAdapter<MoviePoster>
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            MoviePoster moviePoster = getItem(position);
+            Movie movie = getItem(position);
+
+            String posterUrl = movie.poster;
+
 
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(
@@ -32,7 +37,10 @@ public class MoviePosterAdapter extends ArrayAdapter<MoviePoster>
             }
 
             ImageView posterView = (ImageView) convertView.findViewById(R.id.moviePoster_image);
-            posterView.setImageResource(moviePoster.image);
+
+            posterView.setAdjustViewBounds(true);
+            posterView.setPadding(0,0,0,0);
+            Picasso.with(getContext()).load(posterUrl).fit().placeholder(R.drawable.empty_photo).into(posterView);
 
 
             return convertView;
