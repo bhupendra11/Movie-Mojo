@@ -1,5 +1,6 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,32 +30,7 @@ import java.util.ArrayList;
 public class PosterDisplayFragment extends Fragment {
     private MovieAdapter movieAdapter;
 
-   /* Movie[] movies = {
-            new Movie(R.drawable.antman),
-            new Movie(R.drawable.intersteller),
-            new Movie(R.drawable.jurrasic),
-            new Movie(R.drawable.antman),
-            new Movie(R.drawable.intersteller),
-            new Movie(R.drawable.jurrasic),
-            new Movie(R.drawable.antman),
-            new Movie(R.drawable.intersteller),
-            new Movie(R.drawable.jurrasic),
-            new Movie(R.drawable.antman),
-            new Movie(R.drawable.intersteller),
-            new Movie(R.drawable.jurrasic),
-            new Movie(R.drawable.antman),
-            new Movie(R.drawable.intersteller),
-            new Movie(R.drawable.jurrasic),
-            new Movie(R.drawable.antman),
-            new Movie(R.drawable.intersteller),
-            new Movie(R.drawable.jurrasic),
-            new Movie(R.drawable.antman),
-            new Movie(R.drawable.intersteller),
-            new Movie(R.drawable.jurrasic)
 
-    };
-
-    */
 
     public PosterDisplayFragment() {
     }
@@ -73,12 +49,27 @@ public class PosterDisplayFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                
+                Movie movie = movieAdapter.getItem(position);
+
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra("MovieParcel", movie);
+
+
+                startActivity(intent);
+
+
+                //Toast.makeText(getContext(), movie.title,Toast.LENGTH_SHORT).show();
 
             }
         } );
 
         return  rootView;
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -103,11 +94,11 @@ public class PosterDisplayFragment extends Fragment {
 
 
 
-    public class FetchMovieDataTask extends AsyncTask<String, Void, String[]>{
+    public class FetchMovieDataTask extends AsyncTask<String, Void, ArrayList<Movie>>{
 
         private final String LOG_TAG = FetchMovieDataTask.class.getSimpleName();
 
-        private String[] getMoviesPosterDataFromJson(String moviesJsonStr)
+        private ArrayList<Movie> getMoviesPosterDataFromJson(String moviesJsonStr)
                 throws JSONException {
             // These are the names of the JSON objects that need to be extracted.
             final String TMDB_RESULTS= "results";
@@ -117,41 +108,57 @@ public class PosterDisplayFragment extends Fragment {
             final String TMDB_BACKDROP_PATH = "backdrop_path";
             final String TMDB_POPULARITY = "popularity";
             final String TMDB_VOTE_AVG = "vote_average";
+            final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
+            final String POSTER_SIZE = "w185";
+            final String BACKDROP_SIZE = "w500";
+
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
             JSONArray moviesArray = moviesJson.getJSONArray(TMDB_RESULTS);
             // TMDB returns json movie objects
 
-            String[] resultStrs = new String[moviesArray.length()];
+            ArrayList<Movie> movieList = new ArrayList<Movie>();
 
           //  List<Map<String, String>> listOfMaps = new ArrayList<Map<String, String>>();
 
             for(int i = 0; i < moviesArray.length(); i++) {
-                // For now, using the format "Day, description, hi/low"
+
+                //Create a Movie  object
+                Movie movie ;
+
                 String poster_path;
                 String overview;
                 String title;
                 String backdrop_path;
-                String poularity;
+                String popularity;
                 String vote_avg;
                 // Get the JSON object representing the movie
                 JSONObject movieObject = moviesArray.getJSONObject(i);
 
 
-                poster_path = movieObject.getString(TMDB_POSTER_PATH);
+                poster_path = BASE_IMAGE_URL + POSTER_SIZE +movieObject.getString(TMDB_POSTER_PATH) ;
+                overview = movieObject.getString(TMDB_OVERVIEW);
+                title = movieObject.getString(TMDB_TITLE);
+                backdrop_path = BASE_IMAGE_URL + BACKDROP_SIZE +movieObject.getString(TMDB_BACKDROP_PATH);
+                popularity = movieObject.getString(TMDB_POPULARITY);
+                vote_avg = movieObject.getString(TMDB_VOTE_AVG);
 
-                resultStrs[i] =poster_path;
+                // create a movie object from above parameters
+                movie = new Movie(poster_path,overview,title,backdrop_path,popularity,vote_avg);
+
+                movieList.add(movie);
+
 
             }
                /* for (String s : resultStrs) {
                     Log.v(LOG_TAG, "Forecast entry: " + s);
                 }
                 */
-            return resultStrs;
+            return movieList;
         }
 
 
         @Override
-        protected String[] doInBackground(String... params) {
+        protected ArrayList<Movie> doInBackground(String... params) {
 
 
             // These two need to be declared outside the try/catch
@@ -167,7 +174,7 @@ public class PosterDisplayFragment extends Fragment {
 
 
             try {
-                // Construct the URL for the OpenWeatherMap query
+                // Construct the URL for the TMDB query
                 // Possible parameters are available at TMDB's  API page, at
 
 
@@ -186,7 +193,7 @@ public class PosterDisplayFragment extends Fragment {
                 URL url = new URL(builtUri.toString());
                 Log.v(LOG_TAG, "Built URI : "+builtUri.toString());
 
-                // Create the request to OpenWeatherMap, and open the connection
+                // Create the request to TMDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -247,16 +254,16 @@ public class PosterDisplayFragment extends Fragment {
 
 
         @Override
-        protected void onPostExecute(String[] results) {
-            super.onPostExecute(results);
+        protected void onPostExecute(ArrayList<Movie> movieList) {
+            super.onPostExecute(movieList);
 
-            if(results !=null) {
+            if(movieList !=null) {
                 movieAdapter.clear();
-                String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w185";
-                String poster_path = "";
-                for (int i = 0; i < results.length; i++) {
-                    poster_path = BASE_POSTER_URL + results[i];
-                    movieAdapter.add(new Movie(poster_path));
+
+               Movie curMovie;
+                for (int i = 0; i < movieList.size(); i++) {
+                    curMovie = movieList.get(i);
+                    movieAdapter.add(curMovie);
                 }
 
             }

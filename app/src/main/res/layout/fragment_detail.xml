@@ -1,0 +1,48 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+
+        tools:context="popularmovies.app9ation.xyz.popularmovies.DetailActivityFragment"
+        tools:showIn="@layout/activity_detail"
+        android:orientation="vertical">
+
+    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/backdropPoster_image"
+
+        android:contentDescription="Movie backdrop" />
+
+
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_marginTop="342dp"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/movie_overview_textView"
+        android:gravity="center_vertical"
+    />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/smallDetailviewPoster"
+            android:layout_gravity="left|bottom"
+            />
+
+
+    </FrameLayout>
+
+</ScrollView>
