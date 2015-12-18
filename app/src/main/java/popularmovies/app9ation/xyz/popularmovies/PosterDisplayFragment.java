@@ -4,9 +4,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,10 +33,17 @@ import java.util.ArrayList;
  */
 public class PosterDisplayFragment extends Fragment {
     private MovieAdapter movieAdapter;
-
+    private Movie movie;
+    private String SORT_PARAM ="popularity.desc";
 
 
     public PosterDisplayFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -49,7 +60,7 @@ public class PosterDisplayFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Movie movie = movieAdapter.getItem(position);
+                 movie = movieAdapter.getItem(position);
 
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
                         .putExtra("MovieParcel", movie);
@@ -66,22 +77,51 @@ public class PosterDisplayFragment extends Fragment {
         return  rootView;
     }
 
+    public void onCreateOptionsMenu(Menu menu , MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        super.onCreateOptionsMenu(menu,inflater);
+        inflater.inflate(R.menu.menu_fragment_main, menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if(id == R.id.action_sort_popularity){
+
+            SORT_PARAM = "popularity.desc";
+            updateMovies(SORT_PARAM);
+
+        }
+
+        if(id== R.id.action_sort_rating){
+
+            SORT_PARAM = "vote_average.desc";
+            updateMovies(SORT_PARAM);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("movieParcel",movie);
         super.onSaveInstanceState(outState);
     }
+
 
     @Override
     public void onStart() {
         super.onStart();
-        updateMovies();
+        updateMovies(SORT_PARAM);
     }
 
-    public void updateMovies(){
+    public void updateMovies(String sortType){
         FetchMovieDataTask movieDataTask = new FetchMovieDataTask();
 
-        String SORT_PARAM = "popularity.desc";
+        SORT_PARAM = sortType;
         movieDataTask.execute(SORT_PARAM);
     }
 
@@ -110,7 +150,10 @@ public class PosterDisplayFragment extends Fragment {
             final String TMDB_VOTE_AVG = "vote_average";
             final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
             final String POSTER_SIZE = "w185";
+            final String SMALL_POSTER_SIZE ="w92";
             final String BACKDROP_SIZE = "w500";
+            final String RELEASE_DATE ="release_date";
+
 
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
             JSONArray moviesArray = moviesJson.getJSONArray(TMDB_RESULTS);
@@ -126,24 +169,32 @@ public class PosterDisplayFragment extends Fragment {
                 Movie movie ;
 
                 String poster_path;
+                String small_poster_path;
                 String overview;
                 String title;
                 String backdrop_path;
                 String popularity;
                 String vote_avg;
+                String release_year;
                 // Get the JSON object representing the movie
                 JSONObject movieObject = moviesArray.getJSONObject(i);
 
 
                 poster_path = BASE_IMAGE_URL + POSTER_SIZE +movieObject.getString(TMDB_POSTER_PATH) ;
+                small_poster_path = BASE_IMAGE_URL +SMALL_POSTER_SIZE +movieObject.getString(TMDB_POSTER_PATH);
                 overview = movieObject.getString(TMDB_OVERVIEW);
                 title = movieObject.getString(TMDB_TITLE);
                 backdrop_path = BASE_IMAGE_URL + BACKDROP_SIZE +movieObject.getString(TMDB_BACKDROP_PATH);
                 popularity = movieObject.getString(TMDB_POPULARITY);
                 vote_avg = movieObject.getString(TMDB_VOTE_AVG);
 
+
+                release_year =movieObject.getString(RELEASE_DATE)
+                       // .substring(0,4)
+                ;    // Get the movie Year from movie release_date string
+
                 // create a movie object from above parameters
-                movie = new Movie(poster_path,overview,title,backdrop_path,popularity,vote_avg);
+                movie = new Movie(poster_path,small_poster_path,overview,title,backdrop_path,popularity,vote_avg, release_year);
 
                 movieList.add(movie);
 

@@ -1,48 +1,110 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:background="#123211"
     >
 
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-
-        tools:context="popularmovies.app9ation.xyz.popularmovies.DetailActivityFragment"
-        tools:showIn="@layout/activity_detail"
-        android:orientation="vertical">
-
-    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/backdropPoster_image"
-
-        android:contentDescription="Movie backdrop" />
-
-
-
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_marginTop="342dp"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/movie_overview_textView"
-        android:gravity="center_vertical"
-    />
+        android:layout_height="match_parent"
+        android:layout_marginTop="0dp"
+        tools:background="#884219"
+        android:clipChildren="false">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="281dp"
+            tools:src="@drawable/backdrop_placeholder"
+            android:layout_marginTop="-30dp"
+            android:id="@+id/backdropPoster_image"
+            android:contentDescription="Movie Backdrop Image"/>
+
+        <ImageView
             android:id="@+id/smallDetailviewPoster"
-            android:layout_gravity="left|bottom"
+            android:layout_width="92dp"
+            android:layout_height="138dp"
+            tools:src="@drawable/small_poster_placeholder"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="240dp"
+            android:layout_marginLeft="15dp"
             />
 
 
-    </FrameLayout>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:background="#abee34"
+            android:layout_toRightOf="@+id/smallDetailviewPoster"
+            android:layout_toEndOf="@+id/smallDetailviewPoster"
+            android:layout_marginLeft="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_alignTop="@+id/smallDetailviewPoster"
+            android:layout_marginTop="20dp"
+            android:id="@+id/linearLayout">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    tools:text="Star Wars: Episode V- The Empire Strikes Back"
+                     android:textSize="20sp"
+                    tools:background="#987654"
+
+                    android:id="@+id/movieName_textView" />
+
+             <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    tools:text="2015"
+
+                    android:id="@+id/movieYear_textView" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:background="#12efef"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        tools:text="7.1"
+                        android:textSize="30sp"
+                        android:id="@+id/rating_textView" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="/10"
+                        android:id="@+id/ratingFull_textView" />
+
+             </LinearLayout>
+
+        </LinearLayout>
+
+
+
+        <TextView
+            android:id="@+id/movie_overview_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:background="#ccedce"
+            tools:text="Ethan and team take on their most impossible mission yet, eradicating the Syndicate - an International rogue organization as highly skilled as they are, committed to destroying the IMF."
+            android:padding="15dp"
+            android:layout_below="@+id/smallDetailviewPoster"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp" />
+
+    </RelativeLayout>
 </ScrollView>
