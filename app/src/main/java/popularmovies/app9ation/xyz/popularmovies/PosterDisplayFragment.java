@@ -35,6 +35,7 @@ public class PosterDisplayFragment extends Fragment {
     private MovieAdapter movieAdapter;
     private Movie movie;
     private String SORT_PARAM ="popularity.desc";
+    private String VOTE_COUNT_MIN ="200";
 
 
     public PosterDisplayFragment() {
@@ -169,7 +170,6 @@ public class PosterDisplayFragment extends Fragment {
                 Movie movie ;
 
                 String poster_path;
-                String small_poster_path;
                 String overview;
                 String title;
                 String backdrop_path;
@@ -181,7 +181,6 @@ public class PosterDisplayFragment extends Fragment {
 
 
                 poster_path = BASE_IMAGE_URL + POSTER_SIZE +movieObject.getString(TMDB_POSTER_PATH) ;
-                small_poster_path = BASE_IMAGE_URL +SMALL_POSTER_SIZE +movieObject.getString(TMDB_POSTER_PATH);
                 overview = movieObject.getString(TMDB_OVERVIEW);
                 title = movieObject.getString(TMDB_TITLE);
                 backdrop_path = BASE_IMAGE_URL + BACKDROP_SIZE +movieObject.getString(TMDB_BACKDROP_PATH);
@@ -194,7 +193,7 @@ public class PosterDisplayFragment extends Fragment {
                 ;    // Get the movie Year from movie release_date string
 
                 // create a movie object from above parameters
-                movie = new Movie(poster_path,small_poster_path,overview,title,backdrop_path,popularity,vote_avg, release_year);
+                movie = new Movie(poster_path,overview,title,backdrop_path,popularity,vote_avg, release_year);
 
                 movieList.add(movie);
 
@@ -221,7 +220,6 @@ public class PosterDisplayFragment extends Fragment {
             // Will contain the raw JSON response as a string.
             String moviesJsonStr = null;
 
-            String format = "json";
 
 
             try {
@@ -232,10 +230,12 @@ public class PosterDisplayFragment extends Fragment {
                 final String FORECAST_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
                 final String SORT_PARAM = "sort_by";
                 final String APPID_PARAM = "api_key";
+                final String VOTE_COUNT_GREATER ="vote_count.gte";
 
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                         .appendQueryParameter(SORT_PARAM,params[0])
                         .appendQueryParameter(APPID_PARAM, BuildConfig.TMDB_API_KEY)
+                        .appendQueryParameter(VOTE_COUNT_GREATER,VOTE_COUNT_MIN)
                         .build();
 
 

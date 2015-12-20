@@ -22,10 +22,13 @@
             android:contentDescription="Movie Backdrop Image"/>
 
         <ImageView
-            android:id="@+id/smallDetailviewPoster"
+            android:id="@+id/moviePoster_image"
+            android:elevation="8dp"
+            android:background="#fff"
             android:layout_width="92dp"
             android:layout_height="138dp"
-            tools:src="@drawable/small_poster_placeholder"
+            android:transitionName="@string/transition_poster"
+            tools:src="@drawable/antman"
             android:layout_alignParentTop="true"
             android:layout_marginTop="240dp"
             android:layout_marginLeft="15dp"
@@ -38,11 +41,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:background="#abee34"
-            android:layout_toRightOf="@+id/smallDetailviewPoster"
-            android:layout_toEndOf="@+id/smallDetailviewPoster"
+            android:layout_toRightOf="@+id/moviePoster_image"
+            android:layout_toEndOf="@+id/moviePoster_image"
             android:layout_marginLeft="32dp"
             android:layout_marginStart="32dp"
-            android:layout_alignTop="@+id/smallDetailviewPoster"
+            android:layout_alignTop="@+id/moviePoster_image"
             android:layout_marginTop="20dp"
             android:id="@+id/linearLayout">
 
@@ -101,7 +104,7 @@
             tools:background="#ccedce"
             tools:text="Ethan and team take on their most impossible mission yet, eradicating the Syndicate - an International rogue organization as highly skilled as they are, committed to destroying the IMF."
             android:padding="15dp"
-            android:layout_below="@+id/smallDetailviewPoster"
+            android:layout_below="@+id/moviePoster_image"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginTop="15dp" />

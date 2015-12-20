@@ -21,6 +21,7 @@ public class DetailActivityFragment extends Fragment {
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private String backdropImagePath;
     private String smallPosterPath;
+    private String posterPath;
     private String movieOverview;
     private String movieTitle;
     private String movieYear;
@@ -63,7 +64,7 @@ public class DetailActivityFragment extends Fragment {
 
                 movieTitle = movie.title;
                 backdropImagePath = movie.backdrop_path;
-                smallPosterPath = movie.smallPoster;
+                posterPath = movie.poster;
                 movieOverview = movie.overview;
                 movieYear = movie.release_year;
                 vote_avg = movie.vote_avg;
@@ -77,12 +78,14 @@ public class DetailActivityFragment extends Fragment {
 
 
                ImageView backdropPosterView = (ImageView) rootView.findViewById(R.id.backdropPoster_image);
-               ImageView smallPosterView  = (ImageView) rootView.findViewById(R.id.smallDetailviewPoster);
+               ImageView smallPosterView  = (ImageView) rootView.findViewById(R.id.moviePoster_image);
 
 //                backdropPosterView.setAdjustViewBounds(true);
            //     backdropPosterView.setPadding(0,0,0,0);
                Picasso.with(getContext()).load(backdropImagePath).placeholder(R.drawable.backdrop_placeholder).fit().into(backdropPosterView);
-                Picasso.with(getContext()).load(smallPosterPath).placeholder(R.drawable.small_poster_placeholder).fit().into(smallPosterView);
+
+
+                Picasso.with(getContext()).load(posterPath).placeholder(R.drawable.small_poster_placeholder).fit().into(smallPosterView);
 
                 TextView movieOverviewTextview = (TextView) rootView.findViewById(R.id.movie_overview_textView);
                 movieOverviewTextview.setText(movieOverview);

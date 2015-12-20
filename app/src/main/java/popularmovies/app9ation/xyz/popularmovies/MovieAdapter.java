@@ -39,7 +39,7 @@ public class MovieAdapter extends ArrayAdapter<Movie>
             ImageView posterView = (ImageView) convertView.findViewById(R.id.moviePoster_image);
 
             posterView.setAdjustViewBounds(true);
-            posterView.setPadding(0,0,0,0);
+            posterView.setPadding(8,8,8,8);
             Picasso.with(getContext()).load(posterUrl).fit().placeholder(R.drawable.empty_photo).into(posterView);
 
 

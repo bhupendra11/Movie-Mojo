@@ -3,6 +3,9 @@
 
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:transitionName="@string/transition_poster"
+    android:elevation="4dp"
+    android:background="#fff"
     android:scaleType="centerCrop"
     android:id="@+id/moviePoster_image">
 </ImageView>
