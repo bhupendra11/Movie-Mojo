@@ -78,11 +78,16 @@ public class DetailActivityFragment extends Fragment {
 
 
                ImageView backdropPosterView = (ImageView) rootView.findViewById(R.id.backdropPoster_image);
+
+
+
+
                ImageView smallPosterView  = (ImageView) rootView.findViewById(R.id.moviePoster_image);
 
-//                backdropPosterView.setAdjustViewBounds(true);
-           //     backdropPosterView.setPadding(0,0,0,0);
-               Picasso.with(getContext()).load(backdropImagePath).placeholder(R.drawable.backdrop_placeholder).fit().into(backdropPosterView);
+                  backdropPosterView.setAdjustViewBounds(true);
+                  backdropPosterView.setPadding(0,0,0,0);
+
+                Picasso.with(getContext()).load(backdropImagePath).placeholder(R.drawable.backdrop_placeholder).fit().into(backdropPosterView);
 
 
                 Picasso.with(getContext()).load(posterPath).placeholder(R.drawable.small_poster_placeholder).fit().into(smallPosterView);

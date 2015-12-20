@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,8 +69,26 @@ public class PosterDisplayFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
                         .putExtra("MovieParcel", movie);
 
+                ImageView posterView = (ImageView) view.findViewById(R.id.moviePoster_image);
 
-                startActivity(intent);
+
+                // if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                     ActivityOptionsCompat options =
+                             ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                                     posterView,   // The view which starts the transition
+                                     getString(R.string.transition_poster) // The transitionName of the view we’re transitioning to
+                             );
+                     ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+
+               /*  }
+                else{
+                     startActivity(intent);
+                 }
+
+*/
+
+
 
 
                 //Toast.makeText(getContext(), movie.title,Toast.LENGTH_SHORT).show();
@@ -128,13 +149,6 @@ public class PosterDisplayFragment extends Fragment {
 
 
 
-
-
-
-
-
-
-
     public class FetchMovieDataTask extends AsyncTask<String, Void, ArrayList<Movie>>{
 
         private final String LOG_TAG = FetchMovieDataTask.class.getSimpleName();
@@ -151,7 +165,6 @@ public class PosterDisplayFragment extends Fragment {
             final String TMDB_VOTE_AVG = "vote_average";
             final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
             final String POSTER_SIZE = "w185";
-            final String SMALL_POSTER_SIZE ="w92";
             final String BACKDROP_SIZE = "w500";
             final String RELEASE_DATE ="release_date";
 
