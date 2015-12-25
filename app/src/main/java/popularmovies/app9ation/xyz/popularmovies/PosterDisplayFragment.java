@@ -1,6 +1,6 @@
   package popularmovies.app9ation.xyz.popularmovies;
 
-import android.content.Intent;
+  import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,7 +31,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-/**
+  import popularmovies.app9ation.xyz.popularmovies.util.Util;
+
+
+  /**
  * A placeholder fragment containing a simple view.
  */
 public class PosterDisplayFragment extends Fragment {
@@ -40,6 +43,8 @@ public class PosterDisplayFragment extends Fragment {
     private String SORT_PARAM ="popularity.desc";
     private String VOTE_COUNT_MIN ="200";
     private  ArrayList<Movie> movieList = new ArrayList<Movie>();
+    private static final String LOG_TAG = PosterDisplayFragment.class.getSimpleName();
+    private boolean isSavedInstance =false;
 
 
     public PosterDisplayFragment() {
@@ -48,6 +53,15 @@ public class PosterDisplayFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(savedInstanceState == null || !savedInstanceState.containsKey("MoviesList")){
+
+        }
+        else{
+            Log.d(LOG_TAG,"Using savedInstanceBundle ");
+           isSavedInstance= true;
+            movieList =savedInstanceState.getParcelableArrayList("MoviesList");
+        }
         setHasOptionsMenu(true);
     }
 
@@ -85,7 +99,7 @@ public class PosterDisplayFragment extends Fragment {
                /*  }
                 else{
                      startActivity(intent);
-                 }
+              //   }
 
 */
 
@@ -125,7 +139,7 @@ public class PosterDisplayFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-//        outState.putParcelableArrayList("MoviesList",movieList);
+       outState.putParcelableArrayList("MoviesList",movieList);
         super.onSaveInstanceState(outState);
     }
 
@@ -133,7 +147,21 @@ public class PosterDisplayFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        updateMovies(SORT_PARAM);
+        Log.d(LOG_TAG,"inside onStart");
+        if(!isSavedInstance && movieList.isEmpty()) {
+            updateMovies(SORT_PARAM);
+        }
+        else if(movieList !=null) {
+
+            movieAdapter.clear();
+
+            Movie curMovie;
+            for (int i = 0; i < movieList.size(); i++) {
+                curMovie = movieList.get(i);
+                movieAdapter.add(curMovie);
+            }
+
+        }
     }
 
     public void updateMovies(String sortType){
@@ -182,7 +210,9 @@ public class PosterDisplayFragment extends Fragment {
                 String backdrop_path;
                 String popularity;
                 String vote_avg;
-                String release_year;
+                String display_yearMonth;
+                String release_date;
+
                 // Get the JSON object representing the movie
                 JSONObject movieObject = moviesArray.getJSONObject(i);
 
@@ -194,13 +224,15 @@ public class PosterDisplayFragment extends Fragment {
                 popularity = movieObject.getString(TMDB_POPULARITY);
                 vote_avg = movieObject.getString(TMDB_VOTE_AVG);
 
+                release_date =movieObject.getString(RELEASE_DATE);
+                display_yearMonth = Util.getMonthYear(release_date);
 
-                release_year =movieObject.getString(RELEASE_DATE)
+                       // movieObject.getString(RELEASE_DATE)
                        // .substring(0,4)
-                ;    // Get the movie Year from movie release_date string
+                   // Get the movie Year from movie release_date string
 
                 // create a movie object from above parameters
-                movie = new Movie(poster_path,overview,title,backdrop_path,popularity,vote_avg, release_year);
+                movie = new Movie(poster_path,overview,title,backdrop_path,popularity,vote_avg, display_yearMonth);
 
                 movieList.add(movie);
 
@@ -222,6 +254,7 @@ public class PosterDisplayFragment extends Fragment {
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
+
 
 
             // Will contain the raw JSON response as a string.
@@ -251,6 +284,7 @@ public class PosterDisplayFragment extends Fragment {
                 URL url = new URL(builtUri.toString());
                 Log.v(LOG_TAG, "Built URI : "+builtUri.toString());
 
+                Log.d(LOG_TAG,"Querying the TMDB Api");
                 // Create the request to TMDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -278,7 +312,7 @@ public class PosterDisplayFragment extends Fragment {
                     return null;
                 }
                 moviesJsonStr = buffer.toString();
-                  Log.d(LOG_TAG,"Movies Json String: " +moviesJsonStr);
+                  Log.d(LOG_TAG,"Movies Json String: " +moviesJsonStr+"\n");
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attempting
