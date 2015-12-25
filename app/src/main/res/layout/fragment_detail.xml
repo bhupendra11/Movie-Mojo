@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
     tools:background="#123211"
     >
 
@@ -14,7 +15,7 @@
         android:clipChildren="false">
 
         <ImageView
-            android:layout_width="500dp"
+            android:layout_width="match_parent"
             android:layout_height="281dp"
             tools:src="@drawable/fight_club_backdrop"
             android:layout_marginTop="0dp"
@@ -47,7 +48,8 @@
             android:layout_marginStart="32dp"
             android:layout_alignTop="@+id/moviePoster_image"
             android:layout_marginTop="20dp"
-            android:id="@+id/linearLayout">
+            android:id="@+id/linearLayout"
+            android:clipChildren="false">
 
             <TextView
                     android:layout_width="wrap_content"
@@ -72,6 +74,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     tools:background="#12efef"
+                    android:clipChildren="false"
                     >
 
                     <TextView
@@ -83,13 +86,7 @@
                         android:textSize="30sp"
                         android:id="@+id/rating_textView" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="/10"
-                        android:id="@+id/ratingFull_textView" />
+
 
              </LinearLayout>
 

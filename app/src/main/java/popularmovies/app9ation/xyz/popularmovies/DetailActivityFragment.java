@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,7 +28,7 @@ public class DetailActivityFragment extends Fragment {
     private String movieTitle;
     private String movieYear;
     private String vote_avg;
-    private final String voteFull ="/10";
+    //private final String voteFull ="/10";
 
     private Movie movie;
 
@@ -38,10 +40,13 @@ public class DetailActivityFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         if(savedInstanceState == null || !savedInstanceState.containsKey("movieParcel")){
 
         }
         else{
+            Log.d(LOG_TAG,"Using savedInstanceBundle ");
+
             movie =savedInstanceState.getParcelable("movieParcel");
         }
     }
@@ -73,6 +78,7 @@ public class DetailActivityFragment extends Fragment {
 
                 Log.d(LOG_TAG,"Backdrop Image url: "+backdropImagePath);
                 Log.d(LOG_TAG,"Movie Overview : "+movieOverview);
+                Log.d(LOG_TAG,"Movie Title : "+movieTitle);
 
                 getActivity().setTitle(movieTitle);
 
@@ -104,8 +110,44 @@ public class DetailActivityFragment extends Fragment {
                 TextView movieRatingTextView = (TextView) rootView.findViewById(R.id.rating_textView);
                 movieRatingTextView.setText(vote_avg);
 
-                TextView movieVoteFull = (TextView) rootView.findViewById(R.id.ratingFull_textView);
-                movieVoteFull.setText(voteFull);
+
+
+
+                // For textview transitions
+
+
+
+                View[] animatedViews = new View[] {
+                        movieTitleTextView, movieYearTextView, movieRatingTextView,  movieOverviewTextview,
+                };
+
+                // see here for using the right interpolator is important:
+                // http://www.google.com/design/spec/animation/authentic-motion.html#authentic-motion-mass-weight
+                // and here for how to use them:
+                // http://developer.android.com/guide/topics/graphics/prop-animation.html#interpolators
+                Interpolator interpolator = new DecelerateInterpolator();
+
+                for (int i = 0; i < animatedViews.length; ++i) {
+                    View v = animatedViews[i];
+
+                    // let's enable hardware acceleration for better performance
+                    // http://blog.danlew.net/2015/10/20/using-hardware-layers-to-improve-animation-performance/
+                    v.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+                    // initial state: hide the view and move it down slightly
+                    v.setAlpha(0f);
+                    v.setTranslationY(75);
+
+                    v.animate()
+                            .setInterpolator(interpolator)
+                            .alpha(1.0f)
+                            .translationY(0)
+                            // this little calculation here produces the staggered effect we
+                            // saw, so each animation starts a bit after the previous one
+                            .setStartDelay(300 + 75 * i)
+                            .start();
+                }
+
 
 
 

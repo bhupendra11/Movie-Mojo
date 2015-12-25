@@ -1,4 +1,4 @@
-package popularmovies.app9ation.xyz.popularmovies;
+  package popularmovies.app9ation.xyz.popularmovies;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -39,6 +39,7 @@ public class PosterDisplayFragment extends Fragment {
     private Movie movie;
     private String SORT_PARAM ="popularity.desc";
     private String VOTE_COUNT_MIN ="200";
+    private  ArrayList<Movie> movieList = new ArrayList<Movie>();
 
 
     public PosterDisplayFragment() {
@@ -88,11 +89,6 @@ public class PosterDisplayFragment extends Fragment {
 
 */
 
-
-
-
-                //Toast.makeText(getContext(), movie.title,Toast.LENGTH_SHORT).show();
-
             }
         } );
 
@@ -129,7 +125,7 @@ public class PosterDisplayFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("movieParcel",movie);
+//        outState.putParcelableArrayList("MoviesList",movieList);
         super.onSaveInstanceState(outState);
     }
 
@@ -142,9 +138,9 @@ public class PosterDisplayFragment extends Fragment {
 
     public void updateMovies(String sortType){
         FetchMovieDataTask movieDataTask = new FetchMovieDataTask();
-
-        SORT_PARAM = sortType;
-        movieDataTask.execute(SORT_PARAM);
+        movieList.clear();
+        movieAdapter.notifyDataSetChanged();
+        movieDataTask.execute(sortType);
     }
 
 
@@ -173,9 +169,7 @@ public class PosterDisplayFragment extends Fragment {
             JSONArray moviesArray = moviesJson.getJSONArray(TMDB_RESULTS);
             // TMDB returns json movie objects
 
-            ArrayList<Movie> movieList = new ArrayList<Movie>();
 
-          //  List<Map<String, String>> listOfMaps = new ArrayList<Map<String, String>>();
 
             for(int i = 0; i < moviesArray.length(); i++) {
 
@@ -322,6 +316,7 @@ public class PosterDisplayFragment extends Fragment {
             super.onPostExecute(movieList);
 
             if(movieList !=null) {
+
                 movieAdapter.clear();
 
                Movie curMovie;
