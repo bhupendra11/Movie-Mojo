@@ -10,6 +10,8 @@
     android:horizontalSpacing="0dp"
     android:stretchMode="columnWidth"
     tools:context=".PosterDisplayFragment"
+    tools:backgroung="#abcdef"
+    android:layout_marginTop="50dp"
     android:id="@+id/posters_grid">
 
 

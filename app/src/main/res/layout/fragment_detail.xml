@@ -24,7 +24,6 @@
 
         <ImageView
             android:id="@+id/moviePoster_image"
-            android:elevation="8dp"
             android:background="#fff"
             android:layout_width="92dp"
             android:layout_height="138dp"
@@ -33,6 +32,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="270dp"
             android:layout_marginLeft="15dp"
+            android:elevation="6dp"
             />
 
 
@@ -65,7 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    tools:text="2015"
+                    tools:text="May 2015"
 
                     android:id="@+id/movieYear_textView" />
 
