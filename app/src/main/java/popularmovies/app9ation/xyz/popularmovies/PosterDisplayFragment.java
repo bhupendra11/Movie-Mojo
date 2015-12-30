@@ -55,8 +55,15 @@ public class PosterDisplayFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+<<<<<<< HEAD
         if(savedInstanceState != null && savedInstanceState.containsKey("MoviesList")){
 
+=======
+        if(savedInstanceState == null || !savedInstanceState.containsKey("MoviesList")){
+
+        }
+        else{
+>>>>>>> bfc54b07b2ab61856fc264a97501fd11374a3ebd
             Log.d(LOG_TAG,"Using savedInstanceBundle ");
            isSavedInstance= true;
             movieList =savedInstanceState.getParcelableArrayList("MoviesList");
@@ -100,6 +107,10 @@ public class PosterDisplayFragment extends Fragment {
                      startActivity(intent);
                  }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> bfc54b07b2ab61856fc264a97501fd11374a3ebd
 
             }
         } );
@@ -224,10 +235,16 @@ public class PosterDisplayFragment extends Fragment {
 
                 release_date =movieObject.getString(RELEASE_DATE);
                 display_yearMonth = Util.getMonthYear(release_date);
+<<<<<<< HEAD
 
                        // movieObject.getString(RELEASE_DATE)
                        // .substring(0,4)
                    // Get the movie Year from movie release_date string
+=======
+
+
+
+>>>>>>> bfc54b07b2ab61856fc264a97501fd11374a3ebd
 
                 // create a movie object from above parameters
                 movie = new Movie(poster_path,overview,title,backdrop_path,popularity,vote_avg, display_yearMonth);
