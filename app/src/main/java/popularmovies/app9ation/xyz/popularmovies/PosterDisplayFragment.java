@@ -1,35 +1,36 @@
   package popularmovies.app9ation.xyz.popularmovies;
 
   import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ImageView;
+  import android.net.Uri;
+  import android.os.AsyncTask;
+  import android.os.Build;
+  import android.os.Bundle;
+  import android.support.annotation.Nullable;
+  import android.support.v4.app.ActivityCompat;
+  import android.support.v4.app.ActivityOptionsCompat;
+  import android.support.v4.app.Fragment;
+  import android.util.Log;
+  import android.view.LayoutInflater;
+  import android.view.Menu;
+  import android.view.MenuInflater;
+  import android.view.MenuItem;
+  import android.view.View;
+  import android.view.ViewGroup;
+  import android.widget.AdapterView;
+  import android.widget.GridView;
+  import android.widget.ImageView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+  import org.json.JSONArray;
+  import org.json.JSONException;
+  import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
+  import java.io.BufferedReader;
+  import java.io.IOException;
+  import java.io.InputStream;
+  import java.io.InputStreamReader;
+  import java.net.HttpURLConnection;
+  import java.net.URL;
+  import java.util.ArrayList;
 
   import popularmovies.app9ation.xyz.popularmovies.util.Util;
 
@@ -54,10 +55,8 @@ public class PosterDisplayFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(savedInstanceState == null || !savedInstanceState.containsKey("MoviesList")){
+        if(savedInstanceState != null && savedInstanceState.containsKey("MoviesList")){
 
-        }
-        else{
             Log.d(LOG_TAG,"Using savedInstanceBundle ");
            isSavedInstance= true;
             movieList =savedInstanceState.getParcelableArrayList("MoviesList");
@@ -87,7 +86,7 @@ public class PosterDisplayFragment extends Fragment {
                 ImageView posterView = (ImageView) view.findViewById(R.id.moviePoster_image);
 
 
-                // if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
                      ActivityOptionsCompat options =
                              ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
@@ -96,12 +95,11 @@ public class PosterDisplayFragment extends Fragment {
                              );
                      ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
-               /*  }
+                }
                 else{
                      startActivity(intent);
-              //   }
+                 }
 
-*/
 
             }
         } );
@@ -238,10 +236,7 @@ public class PosterDisplayFragment extends Fragment {
 
 
             }
-               /* for (String s : resultStrs) {
-                    Log.v(LOG_TAG, "Forecast entry: " + s);
-                }
-                */
+
             return movieList;
         }
 
