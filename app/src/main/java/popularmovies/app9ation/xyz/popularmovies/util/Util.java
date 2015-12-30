@@ -3,7 +3,7 @@ package popularmovies.app9ation.xyz.popularmovies.util;
 import android.util.Log;
 
 /**
- * Created by root on 25/12/15.
+ * Created by bhupendra on 25/12/15.
  */
 public class Util {
 
@@ -57,3 +57,4 @@ public class Util {
         return  result;
     }
 }
+
