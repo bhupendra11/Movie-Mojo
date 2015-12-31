@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_movie_data_error">Error getting Movie data from server! Try Again!</string>
+</resources>
