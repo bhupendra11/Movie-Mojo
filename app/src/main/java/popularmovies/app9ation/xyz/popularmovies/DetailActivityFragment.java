@@ -41,10 +41,8 @@ public class DetailActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
 
-        if(savedInstanceState == null || !savedInstanceState.containsKey("movieParcel")){
+        if(savedInstanceState != null && savedInstanceState.containsKey("movieParcel")){
 
-        }
-        else{
             Log.d(LOG_TAG,"Using savedInstanceBundle ");
 
             movie =savedInstanceState.getParcelable("movieParcel");
@@ -147,16 +145,7 @@ public class DetailActivityFragment extends Fragment {
                             .setStartDelay(300 + 75 * i)
                             .start();
                 }
-
-
-
-
-
             }
-
-
-
-
         }
 
         return  rootView;

@@ -19,6 +19,7 @@
   import android.widget.AdapterView;
   import android.widget.GridView;
   import android.widget.ImageView;
+  import android.widget.Toast;
 
   import org.json.JSONArray;
   import org.json.JSONException;
@@ -305,6 +306,7 @@ public class PosterDisplayFragment extends Fragment {
                   Log.d(LOG_TAG,"Movies Json String: " +moviesJsonStr+"\n");
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
+                Toast.makeText(getContext(),getActivity().getString(R.string.no_movie_data_error) ,Toast.LENGTH_SHORT).show();
                 // If the code didn't successfully get the weather data, there's no point in attempting
                 // to parse it.
                 return  null;

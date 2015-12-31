@@ -6,6 +6,7 @@
     <string name="sort_popularity">Most Popular</string>
     <string name="sort_rating">Highest Rated</string>
     <string name="transition_poster">Transitioning Poster</string>
+    <string name="no_movie_data_error">Error getting Movie data from server! Try Again!</string>
 
 
 </resources>
