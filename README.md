@@ -9,4 +9,4 @@ Use this api key in your gradle.properties file as:
 
 MyTMDBApiKey= "YOUR_TMDB_API_KEY_HERE"
 
-![App demo GIF] (https://cloud.githubusercontent.com/assets/6179888/12221650/fb6c5200-b7c9-11e5-9ec8-526af49396f9.gif)
+![App demo GIF] (https://cloud.githubusercontent.com/assets/6179888/12053298/95b2ba2e-af3d-11e5-8405-5b87bec5e643.gif)
