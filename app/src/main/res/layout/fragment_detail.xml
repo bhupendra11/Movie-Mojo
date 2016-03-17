@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:clipChildren="false"
     tools:background="#123211"
-    >
+    android:fillViewport="false">
 
 
     <RelativeLayout
@@ -40,7 +40,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             tools:background="#abee34"
             android:layout_toRightOf="@+id/moviePoster_image"
             android:layout_toEndOf="@+id/moviePoster_image"
@@ -93,6 +93,18 @@
         </LinearLayout>
 
 
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/overview_heading_textview"
+            android:layout_below="@+id/moviePoster_image"
+            android:text="Overview : "
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:layout_marginTop="15dp"
+            />
+
 
         <TextView
             android:id="@+id/movie_overview_textView"
@@ -101,10 +113,38 @@
             tools:background="#ccedce"
             tools:text="Ethan and team take on their most impossible mission yet, eradicating the Syndicate - an International rogue organization as highly skilled as they are, committed to destroying the IMF."
             android:padding="15dp"
-            android:layout_below="@+id/moviePoster_image"
+            android:layout_below="@+id/overview_heading_textview"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="15dp" />
+            android:layout_marginTop="15dp"
+
+            />
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/reviews_heading_textview"
+            android:layout_below="@+id/movie_overview_textView"
+            android:text="Reviews : "
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:layout_marginTop="15dp"
+            />
+
+
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/review_listView"
+            android:layout_below="@+id/reviews_heading_textview"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="25dp"
+            >
+
+        </ListView>
 
     </RelativeLayout>
 </ScrollView>

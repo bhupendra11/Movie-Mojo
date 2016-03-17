@@ -11,20 +11,24 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import popularmovies.app9ation.xyz.popularmovies.MovieService.TMDBApi;
 import popularmovies.app9ation.xyz.popularmovies.model.AllReviews;
+import popularmovies.app9ation.xyz.popularmovies.model.AllReviews.MovieReview;
 import popularmovies.app9ation.xyz.popularmovies.model.AllTrailers;
+import popularmovies.app9ation.xyz.popularmovies.util.Helper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import popularmovies.app9ation.xyz.popularmovies.MovieService.TMDBApi;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -51,7 +55,13 @@ public class DetailActivityFragment extends Fragment {
     private AllTrailers allTrailers;
     private List<AllTrailers.MovieTrailer> trailerItems;
     private AllReviews allReviews;
-    private List<AllReviews.MovieReview> reviewItems;
+    private List<AllReviews.MovieReview> reviewItems = new ArrayList<MovieReview>();
+
+
+    //For the UI of reviews and trailers
+    ListView trailersListView;
+    ListView reviewsListView;
+    ReviewAdapter reviewAdapter  ;
 
 
 
@@ -180,9 +190,14 @@ public class DetailActivityFragment extends Fragment {
             }
 
 
+
+
+            // for displaying list of reviews
+
+            reviewsListView = (ListView) rootView.findViewById(R.id.review_listView);
+
+
             // Retrofit for detail movie calls
-
-
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(API_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -207,6 +222,8 @@ public class DetailActivityFragment extends Fragment {
                         );
                     }
 
+
+
                 }
 
                 @Override
@@ -229,10 +246,19 @@ public class DetailActivityFragment extends Fragment {
                     reviewItems = allReviews.getReviewsList();
 
                     for (AllReviews.MovieReview item : reviewItems) {
-                        Log.d(LOG_TAG, " Review id = " + item.getId() +"\n Review author= " + item.getAuthor() +  ", " +
-                                        "\n Content= " + item.getContent() + "\n Url = " + item.getUrl()
+                        Log.d(LOG_TAG, " Review id = " + item.getId() + "\n Review author= " + item.getAuthor() + ", " +
+                                "\n Content= " + item.getContent() + "\n Url = " + item.getUrl()
                         );
                     }
+
+                    Log.d(LOG_TAG, "ReviewItems size=" +reviewItems.size());
+
+                    reviewAdapter = new ReviewAdapter(getActivity(),reviewItems);
+
+                    reviewsListView.setAdapter(reviewAdapter);
+                    Helper.getListViewSize(reviewsListView);
+                    //  reviewAdapter.notifyDataSetChanged();
+
                 }
 
                 @Override
@@ -240,6 +266,12 @@ public class DetailActivityFragment extends Fragment {
                     Log.d(LOG_TAG, "Response failed : " + t.getMessage());
                 }
             });
+
+
+            Log.d(LOG_TAG, "ReviewItems size=" +reviewItems.size());
+
+            // for the UI of reviews and trailers
+
 
 
 
