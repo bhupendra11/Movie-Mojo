@@ -6,7 +6,9 @@
     <string name="sort_popularity">Most Popular</string>
     <string name="sort_rating">Highest Rated</string>
     <string name="transition_poster">Transitioning Poster</string>
-    <string name="no_movie_data_error">Error getting Movie data from server! Try Again!</string>
+    <string name="no_movie_data_error">Error getting Movie data from server! Check your network and try again!</string>
+    <string name="title_activity_portfolio">PortfolioActivity</string>
+    <string name="portfolio">Portfolio</string>
 
 
 </resources>

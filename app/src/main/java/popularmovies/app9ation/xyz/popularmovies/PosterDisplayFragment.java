@@ -1,39 +1,39 @@
-  package popularmovies.app9ation.xyz.popularmovies;
+package popularmovies.app9ation.xyz.popularmovies;
 
-  import android.content.Intent;
-  import android.net.Uri;
-  import android.os.AsyncTask;
-  import android.os.Build;
-  import android.os.Bundle;
-  import android.support.annotation.Nullable;
-  import android.support.v4.app.ActivityCompat;
-  import android.support.v4.app.ActivityOptionsCompat;
-  import android.support.v4.app.Fragment;
-  import android.util.Log;
-  import android.view.LayoutInflater;
-  import android.view.Menu;
-  import android.view.MenuInflater;
-  import android.view.MenuItem;
-  import android.view.View;
-  import android.view.ViewGroup;
-  import android.widget.AdapterView;
-  import android.widget.GridView;
-  import android.widget.ImageView;
-  import android.widget.Toast;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-  import org.json.JSONArray;
-  import org.json.JSONException;
-  import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-  import java.io.BufferedReader;
-  import java.io.IOException;
-  import java.io.InputStream;
-  import java.io.InputStreamReader;
-  import java.net.HttpURLConnection;
-  import java.net.URL;
-  import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 
-  import popularmovies.app9ation.xyz.popularmovies.util.Util;
+import popularmovies.app9ation.xyz.popularmovies.util.Util;
 
 
   /**
@@ -178,6 +178,7 @@ public class PosterDisplayFragment extends Fragment {
                 throws JSONException {
             // These are the names of the JSON objects that need to be extracted.
             final String TMDB_RESULTS= "results";
+            final String TMDB_ID ="id";
             final String TMDB_POSTER_PATH= "poster_path";
             final String TMDB_OVERVIEW = "overview";
             final String TMDB_TITLE = "title";
@@ -201,6 +202,7 @@ public class PosterDisplayFragment extends Fragment {
                 //Create a Movie  object
                 Movie movie ;
 
+                Long id;
                 String poster_path;
                 String overview;
                 String title;
@@ -213,7 +215,7 @@ public class PosterDisplayFragment extends Fragment {
                 // Get the JSON object representing the movie
                 JSONObject movieObject = moviesArray.getJSONObject(i);
 
-
+               id = movieObject.getLong(TMDB_ID);
                 poster_path = BASE_IMAGE_URL + POSTER_SIZE +movieObject.getString(TMDB_POSTER_PATH) ;
                 overview = movieObject.getString(TMDB_OVERVIEW);
                 title = movieObject.getString(TMDB_TITLE);
@@ -226,7 +228,7 @@ public class PosterDisplayFragment extends Fragment {
           // Get the movie Year from movie release_date string
 
                 // create a movie object from above parameters
-                movie = new Movie(poster_path,overview,title,backdrop_path,popularity,vote_avg, display_yearMonth);
+                movie = new Movie(id,poster_path,overview,title,backdrop_path,popularity,vote_avg, display_yearMonth);
 
                 movieList.add(movie);
 
@@ -273,12 +275,13 @@ public class PosterDisplayFragment extends Fragment {
 
 
                 URL url = new URL(builtUri.toString());
-                Log.v(LOG_TAG, "Built URI : "+builtUri.toString());
+                Log.d(LOG_TAG, "Built URI : "+builtUri.toString());
 
-                Log.d(LOG_TAG,"Querying the TMDB Api");
+                Log.d(LOG_TAG,"Querying the TMDB Api" );
                 // Create the request to TMDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
+
                 urlConnection.connect();
 
                 // Read the input stream into a String
@@ -286,8 +289,10 @@ public class PosterDisplayFragment extends Fragment {
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
                     // Nothing to do.
+
                     return null;
                 }
+
                 reader = new BufferedReader(new InputStreamReader(inputStream));
 
                 String line;
@@ -303,10 +308,12 @@ public class PosterDisplayFragment extends Fragment {
                     return null;
                 }
                 moviesJsonStr = buffer.toString();
-                  Log.d(LOG_TAG,"Movies Json String: " +moviesJsonStr+"\n");
+                //  Log.d(LOG_TAG,"Movies Json String: " +moviesJsonStr+"\n");
             } catch (IOException e) {
+
                 Log.e(LOG_TAG, "Error ", e);
-                Toast.makeText(getContext(),getActivity().getString(R.string.no_movie_data_error) ,Toast.LENGTH_SHORT).show();
+                // show user with an error message using toast
+
                 // If the code didn't successfully get the weather data, there's no point in attempting
                 // to parse it.
                 return  null;
@@ -319,6 +326,7 @@ public class PosterDisplayFragment extends Fragment {
                         reader.close();
                     } catch (final IOException e) {
                         Log.e(LOG_TAG, "Error closing stream", e);
+
                     }
                 }
             }
@@ -351,6 +359,10 @@ public class PosterDisplayFragment extends Fragment {
                     movieAdapter.add(curMovie);
                 }
 
+            }
+            else{
+                // Let the user know that some problem has occurred via a toast
+                Toast.makeText(getContext(),getActivity().getString(R.string.no_movie_data_error) ,Toast.LENGTH_SHORT).show();
             }
 
 

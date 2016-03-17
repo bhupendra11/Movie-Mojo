@@ -16,6 +16,14 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="gateways"
+                    android:scheme="cube26" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -23,6 +31,15 @@
         <activity
             android:name=".DetailActivity"
             android:label="@string/title_activity_detail"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="popularmovies.app9ation.xyz.popularmovies.MainActivity" />
+        </activity>
+        <activity
+            android:name="cube26.payments.bhupendra.com.cube26payment.PortfolioActivity"
+            android:label="@string/title_activity_portfolio"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
