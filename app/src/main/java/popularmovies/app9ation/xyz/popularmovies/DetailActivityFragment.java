@@ -17,12 +17,14 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import popularmovies.app9ation.xyz.popularmovies.model.MovieDetail;
+import popularmovies.app9ation.xyz.popularmovies.model.AllReviews;
+import popularmovies.app9ation.xyz.popularmovies.model.AllTrailers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import popularmovies.app9ation.xyz.popularmovies.MovieService.TMDBApi;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -38,16 +40,20 @@ public class DetailActivityFragment extends Fragment {
     private String movieTitle;
     private String movieYear;
     private String vote_avg;
-    //private final String voteFull ="/10";
 
     private Movie movie;
 
 
-    //For fething annd storing data in detailFragment
+    //For fething and storing data in detailFragment
     private static final String API_BASE_URL = "http://api.themoviedb.org/3/";
-    private retrofit2.Call<MovieDetail> call;
-    private MovieDetail movieDetail;
-    private List<MovieDetail> movieDetails;
+    private Call<AllTrailers> callTrailer;
+    private Call<AllReviews> callReviews;
+    private AllTrailers allTrailers;
+    private List<AllTrailers.MovieTrailer> trailerItems;
+    private AllReviews allReviews;
+    private List<AllReviews.MovieReview> reviewItems;
+
+
 
 
     public DetailActivityFragment() {
@@ -65,50 +71,7 @@ public class DetailActivityFragment extends Fragment {
 
             movie =savedInstanceState.getParcelable("movieParcel");
         }
-        else if(intent.hasExtra("MovieParcel") ) {
 
-            Log.d(LOG_TAG, "Inside intent.hasExtra()");
-
-            movie = intent.getParcelableExtra("MovieParcel");
-
-            movieID = movie.id;
-            movieTitle = movie.title;
-            backdropImagePath = movie.backdrop_path;
-            posterPath = movie.poster;
-            movieOverview = movie.overview;
-            movieYear = movie.release_year;
-            vote_avg = movie.vote_avg;
-
-
-        }
-
-
-       // Retrofit for detail movie calls
-
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(API_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-
-        MovieService.TMDBApi tmdbApi = retrofit.create(MovieService.TMDBApi.class);
-
-        call = tmdbApi.getMovieDetail(movieID,"trailers,reviews");
-
-        call.enqueue(new Callback<MovieDetail>() {
-            @Override
-            public void onResponse(Call<MovieDetail> call, Response<MovieDetail> response) {
-                Log.d(LOG_TAG, "Returned API data : "+response.message());
-            }
-
-            @Override
-            public void onFailure(Call<MovieDetail> call, Throwable t) {
-
-                Log.d(LOG_TAG, "Response failed : " +t.getMessage());
-
-            }
-        });
 
     }
 
@@ -122,6 +85,25 @@ public class DetailActivityFragment extends Fragment {
         Intent intent = getActivity().getIntent();
 
         if(intent != null){
+
+            if(intent.hasExtra("MovieParcel") ) {
+
+                Log.d(LOG_TAG, "Inside intent.hasExtra()");
+
+                movie = intent.getParcelableExtra("MovieParcel");
+
+                movieID = movie.id;
+                movieTitle = movie.title;
+                backdropImagePath = movie.backdrop_path;
+                posterPath = movie.poster;
+                movieOverview = movie.overview;
+                movieYear = movie.release_year;
+                vote_avg = movie.vote_avg;
+
+
+            }
+
+            /////////////////////
 
             Log.d(LOG_TAG,"Inside intent !=null ");
 
@@ -197,6 +179,70 @@ public class DetailActivityFragment extends Fragment {
                         .start();
             }
 
+
+            // Retrofit for detail movie calls
+
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(API_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            TMDBApi tmdbApi = retrofit.create(TMDBApi.class);
+
+
+            // For fetching trailers
+            callTrailer = tmdbApi.getTrailers(movieID);
+
+            callTrailer.enqueue(new Callback<AllTrailers>() {
+                @Override
+                public void onResponse(Call<AllTrailers> call, Response<AllTrailers> response) {
+                    Log.d(LOG_TAG, "Returned API data : " + response.message());
+                    allTrailers = response.body();
+                    trailerItems = allTrailers.getTrailerList();
+
+                    for (AllTrailers.MovieTrailer item : trailerItems) {
+                        Log.d(LOG_TAG, "Trailer title= " + item.getTrailerTitle() + "\n Trailer id = " + item.getId() + ", " +
+                                        "\nKey= " + item.getKey() + ",\nSite = " + item.getSite()
+                        );
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<AllTrailers> call, Throwable t) {
+
+                    Log.d(LOG_TAG, "Response failed : " + t.getMessage());
+
+                }
+            });
+
+
+            // For fetching reviews
+            callReviews = tmdbApi.getReviews(movieID);
+
+            callReviews.enqueue(new Callback<AllReviews>() {
+                @Override
+                public void onResponse(Call<AllReviews> call, Response<AllReviews> response) {
+                    Log.d(LOG_TAG, "Returned API data : " + response.message());
+                    allReviews = response.body();
+                    reviewItems = allReviews.getReviewsList();
+
+                    for (AllReviews.MovieReview item : reviewItems) {
+                        Log.d(LOG_TAG, " Review id = " + item.getId() +"\n Review author= " + item.getAuthor() +  ", " +
+                                        "\n Content= " + item.getContent() + "\n Url = " + item.getUrl()
+                        );
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<AllReviews> call, Throwable t) {
+                    Log.d(LOG_TAG, "Response failed : " + t.getMessage());
+                }
+            });
+
+
+
         }
 
         return  rootView;
@@ -210,7 +256,7 @@ public class DetailActivityFragment extends Fragment {
 
 
 
-    // Fetch trailers and comments
+
 
 
 

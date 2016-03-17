@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import popularmovies.app9ation.xyz.popularmovies.util.Util;
 
 
-  /**
+/**
  * A placeholder fragment containing a simple view.
  */
 public class PosterDisplayFragment extends Fragment {
@@ -57,8 +57,8 @@ public class PosterDisplayFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if(savedInstanceState != null && savedInstanceState.containsKey("MoviesList")){
-           Log.d(LOG_TAG,"Using savedInstanceBundle ");
-           isSavedInstance= true;
+            Log.d(LOG_TAG,"Using savedInstanceBundle ");
+            isSavedInstance= true;
             movieList =savedInstanceState.getParcelableArrayList("MoviesList");
         }
         setHasOptionsMenu(true);
@@ -78,7 +78,7 @@ public class PosterDisplayFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                 movie = movieAdapter.getItem(position);
+                movie = movieAdapter.getItem(position);
 
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
                         .putExtra("MovieParcel", movie);
@@ -86,19 +86,19 @@ public class PosterDisplayFragment extends Fragment {
                 ImageView posterView = (ImageView) view.findViewById(R.id.moviePoster_image);
 
 
-                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-                     ActivityOptionsCompat options =
-                             ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                                     posterView,   // The view which starts the transition
-                                     getString(R.string.transition_poster) // The transitionName of the view we’re transitioning to
-                             );
-                     ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+                    ActivityOptionsCompat options =
+                            ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                                    posterView,   // The view which starts the transition
+                                    getString(R.string.transition_poster) // The transitionName of the view we’re transitioning to
+                            );
+                    ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
                 }
                 else{
-                     startActivity(intent);
-                 }
+                    startActivity(intent);
+                }
 
             }
         } );
@@ -136,7 +136,7 @@ public class PosterDisplayFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-       outState.putParcelableArrayList("MoviesList",movieList);
+        outState.putParcelableArrayList("MoviesList",movieList);
         super.onSaveInstanceState(outState);
     }
 
@@ -215,7 +215,7 @@ public class PosterDisplayFragment extends Fragment {
                 // Get the JSON object representing the movie
                 JSONObject movieObject = moviesArray.getJSONObject(i);
 
-               id = movieObject.getLong(TMDB_ID);
+                id = movieObject.getLong(TMDB_ID);
                 poster_path = BASE_IMAGE_URL + POSTER_SIZE +movieObject.getString(TMDB_POSTER_PATH) ;
                 overview = movieObject.getString(TMDB_OVERVIEW);
                 title = movieObject.getString(TMDB_TITLE);
@@ -225,7 +225,7 @@ public class PosterDisplayFragment extends Fragment {
 
                 release_date =movieObject.getString(RELEASE_DATE);
                 display_yearMonth = Util.getMonthYear(release_date);
-          // Get the movie Year from movie release_date string
+                // Get the movie Year from movie release_date string
 
                 // create a movie object from above parameters
                 movie = new Movie(id,poster_path,overview,title,backdrop_path,popularity,vote_avg, display_yearMonth);
@@ -353,7 +353,7 @@ public class PosterDisplayFragment extends Fragment {
 
                 movieAdapter.clear();
 
-               Movie curMovie;
+                Movie curMovie;
                 for (int i = 0; i < movieList.size(); i++) {
                     curMovie = movieList.get(i);
                     movieAdapter.add(curMovie);
