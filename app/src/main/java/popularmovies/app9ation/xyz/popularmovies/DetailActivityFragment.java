@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import popularmovies.app9ation.xyz.popularmovies.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,12 +56,14 @@ public class DetailActivityFragment extends Fragment {
     private List<AllTrailers.MovieTrailer> trailerItems;
     private AllReviews allReviews;
     private List<AllReviews.MovieReview> reviewItems = new ArrayList<MovieReview>();
+    private boolean isActivityCreated= false;
 
 
     //For the UI of reviews and trailers
     ListView trailersListView;
     ListView reviewsListView;
-    ReviewAdapter reviewAdapter  ;
+    ViewGroup mReviewsView ;
+    TextView mReviewsHeader ;
 
 
 
@@ -90,7 +92,7 @@ public class DetailActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
+        final View rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
 
         Intent intent = getActivity().getIntent();
 
@@ -124,15 +126,15 @@ public class DetailActivityFragment extends Fragment {
             getActivity().setTitle(movieTitle);
 
 
-           ImageView backdropPosterView = (ImageView) rootView.findViewById(R.id.backdropPoster_image);
+            ImageView backdropPosterView = (ImageView) rootView.findViewById(R.id.backdropPoster_image);
 
 
 
 
-           ImageView smallPosterView  = (ImageView) rootView.findViewById(R.id.moviePoster_image);
+            ImageView smallPosterView  = (ImageView) rootView.findViewById(R.id.moviePoster_image);
 
-              backdropPosterView.setAdjustViewBounds(true);
-              backdropPosterView.setPadding(0,0,0,0);
+            backdropPosterView.setAdjustViewBounds(true);
+            backdropPosterView.setPadding(0,0,0,0);
 
             Picasso.with(getContext()).load(backdropImagePath).placeholder(R.drawable.backdrop_placeholder).fit().into(backdropPosterView);
 
@@ -183,8 +185,8 @@ public class DetailActivityFragment extends Fragment {
                         .setInterpolator(interpolator)
                         .alpha(1.0f)
                         .translationY(0)
-                        // this little calculation here produces the staggered effect we
-                        // saw, so each animation starts a bit after the previous one
+                                // this little calculation here produces the staggered effect we
+                                // saw, so each animation starts a bit after the previous one
                         .setStartDelay(300 + 75 * i)
                         .start();
             }
@@ -194,7 +196,7 @@ public class DetailActivityFragment extends Fragment {
 
             // for displaying list of reviews
 
-            reviewsListView = (ListView) rootView.findViewById(R.id.review_listView);
+
 
 
             // Retrofit for detail movie calls
@@ -245,19 +247,24 @@ public class DetailActivityFragment extends Fragment {
                     allReviews = response.body();
                     reviewItems = allReviews.getReviewsList();
 
-                    for (AllReviews.MovieReview item : reviewItems) {
-                        Log.d(LOG_TAG, " Review id = " + item.getId() + "\n Review author= " + item.getAuthor() + ", " +
-                                "\n Content= " + item.getContent() + "\n Url = " + item.getUrl()
+                   /* for (AllReviews.MovieReview item : reviewItems) {
+                        Log.d(LOG_TAG, " Review id = " + item.getId() + "\n Review author= " + item.getAuthor() +
+                                        "\n Content= " + item.getContent() + "\n Url = " + item.getUrl()
                         );
+                    }*/
+
+                    Log.d(LOG_TAG, "ReviewItems size=" + reviewItems.size());
+
+
+                    mReviewsHeader = (TextView) rootView.findViewById(R.id.reviews_heading_textview);
+                    mReviewsView  = (ViewGroup) rootView.findViewById(R.id.reviews);
+
+                    boolean hasReviews = !reviewItems.isEmpty();
+                    mReviewsHeader.setVisibility(hasReviews ? View.VISIBLE : View.GONE);
+                    mReviewsView.setVisibility(hasReviews ? View.VISIBLE : View.GONE);
+                    if (hasReviews) {
+                        addReviews(reviewItems);
                     }
-
-                    Log.d(LOG_TAG, "ReviewItems size=" +reviewItems.size());
-
-                    reviewAdapter = new ReviewAdapter(getActivity(),reviewItems);
-
-                    reviewsListView.setAdapter(reviewAdapter);
-                    Helper.getListViewSize(reviewsListView);
-                    //  reviewAdapter.notifyDataSetChanged();
 
                 }
 
@@ -266,9 +273,6 @@ public class DetailActivityFragment extends Fragment {
                     Log.d(LOG_TAG, "Response failed : " + t.getMessage());
                 }
             });
-
-
-            Log.d(LOG_TAG, "ReviewItems size=" +reviewItems.size());
 
             // for the UI of reviews and trailers
 
@@ -280,16 +284,43 @@ public class DetailActivityFragment extends Fragment {
         return  rootView;
     }
 
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        isActivityCreated = true;
+
+
+    }
+
+    private void addReviews(List<MovieReview> reviews) {
+        mReviewsView.removeAllViews();
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        for (MovieReview review : reviews) {
+            ViewGroup reviewContainer = (ViewGroup) inflater.inflate(R.layout.reviews_item, mReviewsView,
+                    false);
+
+
+            TextView reviewAuthor = (TextView) reviewContainer.findViewById(R.id.review_author_textView);
+            TextView reviewContent = (TextView) reviewContainer.findViewById(R.id.review_content_textView);
+            reviewAuthor.setText(review.getAuthor());
+            reviewContent.setText(review.getContent());
+            /*reviewContainer.setOnClickListener(this);
+            reviewContainer.setTag(review);*/
+            mReviewsView.addView(reviewContainer);
+
+
+
+
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("movieParcel", movie);
         super.onSaveInstanceState(outState);
     }
-
-
-
-
-
 
 
 
