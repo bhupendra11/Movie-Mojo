@@ -5,4 +5,6 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="backdrop_poster_height">300dp</dimen>
     <dimen name="detailsView_backdrop_height">281dp</dimen>
+    <dimen name="trailer_width">320dp</dimen>
+    <dimen name="trailer_height">240dp</dimen>
 </resources>

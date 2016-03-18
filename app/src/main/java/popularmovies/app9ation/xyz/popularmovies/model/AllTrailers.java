@@ -2,7 +2,6 @@ package popularmovies.app9ation.xyz.popularmovies.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,5 +50,33 @@ public class AllTrailers {
         public String getSite() {
             return mSite;
         }
+
+        public static String getThumbnailUrl(MovieTrailer trailer){
+            return String.format("http://img.youtube.com/vi/%1$s/0.jpg", trailer.getKey());
+
+        }
+
+        public static String getTrailerUrl(MovieTrailer trailer){
+            return String.format("http://www.youtube.com/watch?v=%1$s", trailer.getKey());
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

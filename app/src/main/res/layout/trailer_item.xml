@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/trailer_thumb"
+        tools:background ="#fedcba"
+        android:layout_width="@dimen/trailer_width"
+        android:layout_height="@dimen/trailer_height"
+        android:contentDescription="@string/content_desc_video_thumbnail"
+        android:layout_margin="16dp"
+        />
+
+</FrameLayout>

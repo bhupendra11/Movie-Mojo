@@ -10,5 +10,9 @@
     <string name="title_activity_portfolio">PortfolioActivity</string>
     <string name="portfolio">Portfolio</string>
 
+    <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+    <string name="title_activity_trailers">Trailers</string>
+    <string name="content_desc_video_thumbnail">Trailer thumbnail Image</string>
+
 
 </resources>

@@ -1,17 +1,17 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import popularmovies.app9ation.xyz.popularmovies.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -23,7 +23,8 @@ import popularmovies.app9ation.xyz.popularmovies.MovieService.TMDBApi;
 import popularmovies.app9ation.xyz.popularmovies.model.AllReviews;
 import popularmovies.app9ation.xyz.popularmovies.model.AllReviews.MovieReview;
 import popularmovies.app9ation.xyz.popularmovies.model.AllTrailers;
-import popularmovies.app9ation.xyz.popularmovies.util.Helper;
+import popularmovies.app9ation.xyz.popularmovies.model.AllTrailers.MovieTrailer;
+import popularmovies.app9ation.xyz.popularmovies.util.Log;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,7 +34,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class DetailActivityFragment extends Fragment {
+public class DetailActivityFragment extends Fragment implements  View.OnClickListener{
 
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private Long movieID;
@@ -58,14 +59,17 @@ public class DetailActivityFragment extends Fragment {
     private List<AllReviews.MovieReview> reviewItems = new ArrayList<MovieReview>();
     private TMDBApi tmdbApi;
     private View rootView;
-    private boolean isActivityCreated= false;
+
 
 
     //For the UI of reviews and trailers
-    ListView trailersListView;
-    ListView reviewsListView;
+
     ViewGroup mReviewsView ;
     TextView mReviewsHeader ;
+
+    HorizontalScrollView mTrailersScrollView;
+    TextView mTrailersHeader;
+    ViewGroup mTrailersView;
 
 
 
@@ -227,7 +231,7 @@ public class DetailActivityFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        isActivityCreated = true;
+
 
         // For fetching trailers
         callTrailer = tmdbApi.getTrailers(movieID);
@@ -244,7 +248,18 @@ public class DetailActivityFragment extends Fragment {
                                     "\nKey= " + item.getKey() + ",\nSite = " + item.getSite()
                     );
                 }
+                Log.d(LOG_TAG, "TrailerItems size = "+trailerItems.size());
 
+                mTrailersHeader = (TextView) rootView.findViewById(R.id.trailers_heading_textview);
+                mTrailersScrollView = (HorizontalScrollView) rootView.findViewById(R.id.trailer_container);
+                mTrailersView = (ViewGroup) rootView.findViewById(R.id.trailers);
+
+                boolean hasTrailers = !trailerItems.isEmpty();
+                mTrailersHeader.setVisibility(hasTrailers?View.VISIBLE :View.GONE);
+                mTrailersScrollView.setVisibility(hasTrailers?View.VISIBLE:View.GONE);
+                if(hasTrailers){
+                    addTrailers(trailerItems);
+                }
 
 
             }
@@ -296,6 +311,42 @@ public class DetailActivityFragment extends Fragment {
         });
 
 
+    }
+
+    // On click listener for various views in the DetailActivityFragement
+    @Override
+    public void onClick(View v) {
+
+        if(v.getId() == R.id.trailer_thumb){  // clicked on the trailer thumbnail , launch youtube intent
+            String trailerUrl = (String) v.getTag();
+            Intent playVideoIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(trailerUrl));
+            startActivity(playVideoIntent);
+
+        }
+
+    }
+
+    private void addTrailers(List<MovieTrailer> trailers) {
+        mTrailersView.removeAllViews();
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        Picasso picasso = Picasso.with(getActivity());
+        for(MovieTrailer trailer : trailers){
+            ViewGroup trailerContainer = (ViewGroup) inflater.inflate(R.layout.trailer_item, mTrailersView , false);
+
+            ImageView trailerThumbnail = (ImageView) trailerContainer.findViewById(R.id.trailer_thumb);
+            trailerThumbnail.setTag(MovieTrailer.getTrailerUrl(trailer));
+            trailerThumbnail.setOnClickListener(this);
+
+             picasso.load(MovieTrailer.getThumbnailUrl(trailer))
+                     .resizeDimen(R.dimen.trailer_width , R.dimen.trailer_height)
+                     .centerCrop()
+                     .into(trailerThumbnail);
+
+        mTrailersView.addView(trailerContainer);
+
+
+        }
     }
 
     private void addReviews(List<MovieReview> reviews) {
