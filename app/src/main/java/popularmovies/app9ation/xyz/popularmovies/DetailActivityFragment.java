@@ -56,6 +56,8 @@ public class DetailActivityFragment extends Fragment {
     private List<AllTrailers.MovieTrailer> trailerItems;
     private AllReviews allReviews;
     private List<AllReviews.MovieReview> reviewItems = new ArrayList<MovieReview>();
+    private TMDBApi tmdbApi;
+    private View rootView;
     private boolean isActivityCreated= false;
 
 
@@ -92,7 +94,7 @@ public class DetailActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
+         rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
 
         Intent intent = getActivity().getIntent();
 
@@ -134,7 +136,7 @@ public class DetailActivityFragment extends Fragment {
             ImageView smallPosterView  = (ImageView) rootView.findViewById(R.id.moviePoster_image);
 
             backdropPosterView.setAdjustViewBounds(true);
-            backdropPosterView.setPadding(0,0,0,0);
+            backdropPosterView.setPadding(0, 0, 0, 0);
 
             Picasso.with(getContext()).load(backdropImagePath).placeholder(R.drawable.backdrop_placeholder).fit().into(backdropPosterView);
 
@@ -154,7 +156,7 @@ public class DetailActivityFragment extends Fragment {
             movieRatingTextView.setText(vote_avg);
 
 
-
+            Log.d(LOG_TAG, "Loaded the textViews");
 
             // For textview transitions
 
@@ -191,7 +193,7 @@ public class DetailActivityFragment extends Fragment {
                         .start();
             }
 
-
+            Log.d(LOG_TAG, "Played the animation of textviews");
 
 
             // for displaying list of reviews
@@ -205,74 +207,10 @@ public class DetailActivityFragment extends Fragment {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-            TMDBApi tmdbApi = retrofit.create(TMDBApi.class);
-
-
-            // For fetching trailers
-            callTrailer = tmdbApi.getTrailers(movieID);
-
-            callTrailer.enqueue(new Callback<AllTrailers>() {
-                @Override
-                public void onResponse(Call<AllTrailers> call, Response<AllTrailers> response) {
-                    Log.d(LOG_TAG, "Returned API data : " + response.message());
-                    allTrailers = response.body();
-                    trailerItems = allTrailers.getTrailerList();
-
-                    for (AllTrailers.MovieTrailer item : trailerItems) {
-                        Log.d(LOG_TAG, "Trailer title= " + item.getTrailerTitle() + "\n Trailer id = " + item.getId() + ", " +
-                                        "\nKey= " + item.getKey() + ",\nSite = " + item.getSite()
-                        );
-                    }
+             tmdbApi = retrofit.create(TMDBApi.class);
 
 
 
-                }
-
-                @Override
-                public void onFailure(Call<AllTrailers> call, Throwable t) {
-
-                    Log.d(LOG_TAG, "Response failed : " + t.getMessage());
-
-                }
-            });
-
-
-            // For fetching reviews
-            callReviews = tmdbApi.getReviews(movieID);
-
-            callReviews.enqueue(new Callback<AllReviews>() {
-                @Override
-                public void onResponse(Call<AllReviews> call, Response<AllReviews> response) {
-                    Log.d(LOG_TAG, "Returned API data : " + response.message());
-                    allReviews = response.body();
-                    reviewItems = allReviews.getReviewsList();
-
-                   /* for (AllReviews.MovieReview item : reviewItems) {
-                        Log.d(LOG_TAG, " Review id = " + item.getId() + "\n Review author= " + item.getAuthor() +
-                                        "\n Content= " + item.getContent() + "\n Url = " + item.getUrl()
-                        );
-                    }*/
-
-                    Log.d(LOG_TAG, "ReviewItems size=" + reviewItems.size());
-
-
-                    mReviewsHeader = (TextView) rootView.findViewById(R.id.reviews_heading_textview);
-                    mReviewsView  = (ViewGroup) rootView.findViewById(R.id.reviews);
-
-                    boolean hasReviews = !reviewItems.isEmpty();
-                    mReviewsHeader.setVisibility(hasReviews ? View.VISIBLE : View.GONE);
-                    mReviewsView.setVisibility(hasReviews ? View.VISIBLE : View.GONE);
-                    if (hasReviews) {
-                        addReviews(reviewItems);
-                    }
-
-                }
-
-                @Override
-                public void onFailure(Call<AllReviews> call, Throwable t) {
-                    Log.d(LOG_TAG, "Response failed : " + t.getMessage());
-                }
-            });
 
             // for the UI of reviews and trailers
 
@@ -290,6 +228,72 @@ public class DetailActivityFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         isActivityCreated = true;
+
+        // For fetching trailers
+        callTrailer = tmdbApi.getTrailers(movieID);
+
+        callTrailer.enqueue(new Callback<AllTrailers>() {
+            @Override
+            public void onResponse(Call<AllTrailers> call, Response<AllTrailers> response) {
+                Log.d(LOG_TAG, "Returned API data : " + response.message());
+                allTrailers = response.body();
+                trailerItems = allTrailers.getTrailerList();
+
+                for (AllTrailers.MovieTrailer item : trailerItems) {
+                    Log.d(LOG_TAG, "Trailer title= " + item.getTrailerTitle() + "\n Trailer id = " + item.getId() + ", " +
+                                    "\nKey= " + item.getKey() + ",\nSite = " + item.getSite()
+                    );
+                }
+
+
+
+            }
+
+            @Override
+            public void onFailure(Call<AllTrailers> call, Throwable t) {
+
+                Log.d(LOG_TAG, "Response failed : " + t.getMessage());
+
+            }
+        });
+
+
+        // For fetching reviews
+        callReviews = tmdbApi.getReviews(movieID);
+
+        callReviews.enqueue(new Callback<AllReviews>() {
+            @Override
+            public void onResponse(Call<AllReviews> call, Response<AllReviews> response) {
+                Log.d(LOG_TAG, "Returned API data : " + response.message());
+                allReviews = response.body();
+                reviewItems = allReviews.getReviewsList();
+
+                   /* for (AllReviews.MovieReview item : reviewItems) {
+                        Log.d(LOG_TAG, " Review id = " + item.getId() + "\n Review author= " + item.getAuthor() +
+                                        "\n Content= " + item.getContent() + "\n Url = " + item.getUrl()
+                        );
+                    }*/
+
+                Log.d(LOG_TAG, "ReviewItems size=" + reviewItems.size());
+
+
+                mReviewsHeader = (TextView) rootView.findViewById(R.id.reviews_heading_textview);
+                mReviewsView  = (ViewGroup) rootView.findViewById(R.id.reviews);
+
+                boolean hasReviews = !reviewItems.isEmpty();
+                mReviewsHeader.setVisibility(hasReviews ? View.VISIBLE : View.GONE);
+                mReviewsView.setVisibility(hasReviews ? View.VISIBLE : View.GONE);
+                if (hasReviews) {
+                    addReviews(reviewItems);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<AllReviews> call, Throwable t) {
+                Log.d(LOG_TAG, "Response failed : " + t.getMessage());
+            }
+        });
 
 
     }
