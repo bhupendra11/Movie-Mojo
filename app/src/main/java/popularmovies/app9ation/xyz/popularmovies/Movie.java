@@ -8,6 +8,7 @@ import android.os.Parcelable;
  */
 public class Movie implements Parcelable{
 
+
     Long id;
     String poster;
     String overview;
@@ -41,6 +42,40 @@ public class Movie implements Parcelable{
         release_year = in.readString();
 
     }
+
+    // getters for all movie properties
+    public Long getId() {
+        return id;
+    }
+
+    public String getPoster() {
+        return poster;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getBackdrop_path() {
+        return backdrop_path;
+    }
+
+    public String getPopularity() {
+        return popularity;
+    }
+
+    public String getVote_avg() {
+        return vote_avg;
+    }
+
+    public String getRelease_year() {
+        return release_year;
+    }
+
 
     @Override
     public int describeContents() {

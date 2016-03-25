@@ -1,13 +1,9 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -52,6 +47,16 @@ public class PosterDisplayFragment extends Fragment {
     public PosterDisplayFragment() {
     }
 
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        void onItemSelected(Movie movie);
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,25 +85,8 @@ public class PosterDisplayFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 movie = movieAdapter.getItem(position);
 
-                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra("MovieParcel", movie);
+                ((Callback) getActivity()).onItemSelected(movie);
 
-                ImageView posterView = (ImageView) view.findViewById(R.id.moviePoster_image);
-
-
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-                    ActivityOptionsCompat options =
-                            ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                                    posterView,   // The view which starts the transition
-                                    getString(R.string.transition_poster) // The transitionName of the view we’re transitioning to
-                            );
-                    ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
-
-                }
-                else{
-                    startActivity(intent);
-                }
 
             }
         } );

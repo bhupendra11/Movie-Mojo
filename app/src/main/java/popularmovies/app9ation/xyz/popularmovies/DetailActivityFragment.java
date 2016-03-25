@@ -60,6 +60,8 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     private TMDBApi tmdbApi;
     private View rootView;
 
+    static String DETAIL_MOVIE = "Detail_Movie";
+
 
 
     //For the UI of reviews and trailers
@@ -100,15 +102,19 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                              Bundle savedInstanceState) {
          rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
 
-        Intent intent = getActivity().getIntent();
+        Bundle arguments = getArguments();
 
-        if(intent != null){
+        Movie movie = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
 
-            if(intent.hasExtra("MovieParcel") ) {
+        android.util.Log.d(LOG_TAG , "Movie id = " +movie.id);
+
+        if (arguments != null) {
+
+                movie = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
+
+
 
                 Log.d(LOG_TAG, "Inside intent.hasExtra()");
-
-                movie = intent.getParcelableExtra("MovieParcel");
 
                 movieID = movie.id;
                 movieTitle = movie.title;
@@ -220,18 +226,12 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
 
 
-
-        }
-
         return  rootView;
     }
 
-
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-
+    public void onStart() {
+        super.onStart();
 
         // For fetching trailers
         callTrailer = tmdbApi.getTrailers(movieID);
@@ -245,7 +245,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
                 for (AllTrailers.MovieTrailer item : trailerItems) {
                     Log.d(LOG_TAG, "Trailer title= " + item.getTrailerTitle() + "\n Trailer id = " + item.getId() + ", " +
-                                    "\nKey= " + item.getKey() + ",\nSite = " + item.getSite()
+                            "\nKey= " + item.getKey() + ",\nSite = " + item.getSite()
                     );
                 }
                 Log.d(LOG_TAG, "TrailerItems size = "+trailerItems.size());
@@ -310,8 +310,8 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
             }
         });
 
-
     }
+
 
     // On click listener for various views in the DetailActivityFragement
     @Override
