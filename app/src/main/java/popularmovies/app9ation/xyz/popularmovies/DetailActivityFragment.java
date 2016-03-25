@@ -1,5 +1,6 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -36,6 +38,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class DetailActivityFragment extends Fragment implements  View.OnClickListener{
 
+    public static final String TAG = DetailActivityFragment.class.getSimpleName();
+
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private Long movieID;
     private String backdropImagePath;
@@ -47,6 +51,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     private String vote_avg;
 
     private Movie movie;
+    private ScrollView mDetailLayout;
 
 
     //For fething and storing data in detailFragment
@@ -60,9 +65,9 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     private TMDBApi tmdbApi;
     private View rootView;
 
+    private Activity mContext;
+
     static String DETAIL_MOVIE = "Detail_Movie";
-
-
 
     //For the UI of reviews and trailers
 
@@ -73,25 +78,20 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     TextView mTrailersHeader;
     ViewGroup mTrailersView;
 
-
-
-
     public DetailActivityFragment() {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getActivity().getIntent();
-
-        if(savedInstanceState != null && savedInstanceState.containsKey("movieParcel")){
+    /*    if(savedInstanceState != null && savedInstanceState.containsKey("movieParcel")){
 
             Log.d(LOG_TAG,"Using savedInstanceBundle ");
 
             movie =savedInstanceState.getParcelable("movieParcel");
         }
-
+*/
 
     }
 
@@ -100,19 +100,18 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-         rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
+
 
         Bundle arguments = getArguments();
 
-        Movie movie = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
 
-        android.util.Log.d(LOG_TAG , "Movie id = " +movie.id);
+//        Movie movie = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
+
+  //      android.util.Log.d(LOG_TAG , "Movie id = " +movie.id);
 
         if (arguments != null) {
 
                 movie = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
-
-
 
                 Log.d(LOG_TAG, "Inside intent.hasExtra()");
 
@@ -123,13 +122,28 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                 movieOverview = movie.overview;
                 movieYear = movie.release_year;
                 vote_avg = movie.vote_avg;
-
-
             }
+        else{
+            Log.d(LOG_TAG ,"Arguments are null");
+             }
 
+
+        rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
+
+            mDetailLayout = (ScrollView) rootView.findViewById(R.id.detail_layout);
+
+            if (movie != null) {
+                mDetailLayout.setVisibility(View.VISIBLE);
+            } else {
+                mDetailLayout.setVisibility(View.INVISIBLE);
+                return rootView;
+            }
             /////////////////////
 
-            Log.d(LOG_TAG,"Inside intent !=null ");
+
+
+
+        Log.d(LOG_TAG,"Inside intent !=null ");
 
             Log.d(LOG_TAG,"Backdrop Image url: "+backdropImagePath);
             Log.d(LOG_TAG,"Movie Overview : "+movieOverview);
@@ -167,6 +181,8 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
 
             Log.d(LOG_TAG, "Loaded the textViews");
+
+
 
             // For textview transitions
 
@@ -208,30 +224,33 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
             // for displaying list of reviews
 
-
-
-
             // Retrofit for detail movie calls
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(API_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-             tmdbApi = retrofit.create(TMDBApi.class);
+            tmdbApi = retrofit.create(TMDBApi.class);
+
+            getTrailers();
+            getReviews();
 
 
-
-
-            // for the UI of reviews and trailers
 
 
 
         return  rootView;
     }
 
+
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
+
+    public void getTrailers() {
+
 
         // For fetching trailers
         callTrailer = tmdbApi.getTrailers(movieID);
@@ -273,6 +292,10 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         });
 
 
+    }
+
+
+    public void getReviews(){
         // For fetching reviews
         callReviews = tmdbApi.getReviews(movieID);
 
@@ -309,7 +332,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                 Log.d(LOG_TAG, "Response failed : " + t.getMessage());
             }
         });
-
     }
 
 
@@ -371,11 +393,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("movieParcel", movie);
-        super.onSaveInstanceState(outState);
-    }
 
 
 

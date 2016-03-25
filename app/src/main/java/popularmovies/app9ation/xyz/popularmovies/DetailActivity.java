@@ -45,17 +45,9 @@ public class DetailActivity extends AppCompatActivity {
 
     public void onFabClick(View view) {
 
-
-
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
-
-
-
         //  Check if the movie is in the database, if it is in the db , delete it
-
-
-
 
         // If it is not in the database then add it to database
 

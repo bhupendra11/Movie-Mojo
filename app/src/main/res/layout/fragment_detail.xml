@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:clipChildren="false"
     tools:background="#123211"
-    android:fillViewport="false">
+    android:fillViewport="false"
+    android:id="@+id/detail_layout">
 
 
     <RelativeLayout
@@ -102,7 +103,8 @@
             android:text="Overview : "
             android:fontFamily="sans-serif-condensed"
             android:textAppearance="?android:textAppearanceLarge"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
             />
 
 
@@ -129,7 +131,8 @@
             android:text="Trailers : "
             android:fontFamily="sans-serif-condensed"
             android:textAppearance="?android:textAppearanceLarge"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
             android:visibility="gone"
             />
 
@@ -164,7 +167,8 @@
             android:text="Reviews : "
             android:fontFamily="sans-serif-condensed"
             android:textAppearance="?android:textAppearanceLarge"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
             android:visibility="gone"
             />
 
