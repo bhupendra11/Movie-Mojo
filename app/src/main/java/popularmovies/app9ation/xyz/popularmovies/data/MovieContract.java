@@ -10,9 +10,9 @@ import android.provider.BaseColumns;
  */
 public class MovieContract {
 
-    public static final String CONENT_AUTHORITY = "popularmovies.app9ation.xyz.popularmovies";
+    public static final String CONTENT_AUTHORITY = "popularmovies.app9ation.xyz.popularmovies";
 
-    public static final Uri BASE_CONTENT_URL =  Uri.parse("content://"+CONENT_AUTHORITY);
+    public static final Uri BASE_CONTENT_URL =  Uri.parse("content://"+CONTENT_AUTHORITY);
 
     public static final String PATH_MOVIE = "movie";
 
@@ -20,9 +20,9 @@ public class MovieContract {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URL.buildUpon().appendPath(PATH_MOVIE).build();
 
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE +"/" +CONENT_AUTHORITY +"/" +PATH_MOVIE;
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE +"/" +CONTENT_AUTHORITY +"/" +PATH_MOVIE;
 
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE +"/" +CONENT_AUTHORITY +"/" +PATH_MOVIE;
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE +"/" +CONTENT_AUTHORITY +"/" +PATH_MOVIE;
 
         public static  final String TABLE_NAME = "movie";
 

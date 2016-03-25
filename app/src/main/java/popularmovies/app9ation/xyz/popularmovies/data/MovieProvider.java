@@ -24,13 +24,12 @@ public class MovieProvider extends ContentProvider{
 
 
     private static UriMatcher buildUriMatcher() {
+        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+        final String authority = MovieContract.CONTENT_AUTHORITY;
 
-        final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        final String authority = MovieContract.CONENT_AUTHORITY;
+        matcher.addURI(authority,MovieContract.PATH_MOVIE,MOVIE);
 
-        uriMatcher.addURI(authority,MovieContract.PATH_MOVIE,MOVIE);
-
-        return  sUriMatcher;
+        return  matcher;
 
     }
 

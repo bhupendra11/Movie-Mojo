@@ -1,5 +1,7 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import popularmovies.app9ation.xyz.popularmovies.data.MovieContract;
 import popularmovies.app9ation.xyz.popularmovies.util.Util;
 
 
@@ -42,6 +45,31 @@ public class PosterDisplayFragment extends Fragment {
     private  ArrayList<Movie> movieList = new ArrayList<Movie>();
     private static final String LOG_TAG = PosterDisplayFragment.class.getSimpleName();
     private boolean isSavedInstance =false;
+
+    private static final String[] Movie_COLUMNS = {
+            //Array of all the column names in Movie table
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+            MovieContract.MovieEntry.COLUMN_TITLE,
+            MovieContract.MovieEntry.COLUMN_POSTER,
+            MovieContract.MovieEntry.COLUMN_BACKDROP,
+            MovieContract.MovieEntry.COLUMN_OVERVIEW,
+            MovieContract.MovieEntry.COLUMN_RATING,
+            MovieContract.MovieEntry.COLUMN_DATE,
+
+    };
+
+    // These indices are tied to MOVIE_COLUMNS.  If MOVIE_COLUMNS changes, these
+    // must change.
+    static final int COL_ID = 0;
+    static final int COL_MOVIE_ID =1;
+    static final int COL_TITLE = 2;
+    static final int COL_POSTER = 3;
+    static final int COL_BACKDROP = 4;
+    static final int COL_OVERVIEW = 5;
+    static final int COL_RATING = 6;
+    static final int COL_DATE = 7;
+
 
 
     public PosterDisplayFragment() {
@@ -118,6 +146,10 @@ public class PosterDisplayFragment extends Fragment {
             SORT_PARAM = "vote_average.desc";
             updateMovies(SORT_PARAM);
         }
+        if(id== R.id.action_sort_favorite){
+            // Query the local db to display favorite movies
+            displayFavorites();
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -154,6 +186,17 @@ public class PosterDisplayFragment extends Fragment {
         movieList.clear();
         movieAdapter.notifyDataSetChanged();
         movieDataTask.execute(sortType);
+    }
+
+    public void displayFavorites(){
+
+       FavoriteMovieDisplayTask favoriteMovieDisplayTask = new FavoriteMovieDisplayTask(getActivity());
+        movieList.clear();
+        movieAdapter.notifyDataSetChanged();
+        favoriteMovieDisplayTask.execute();
+
+
+
     }
 
 
@@ -356,4 +399,60 @@ public class PosterDisplayFragment extends Fragment {
 
         }
     }
+
+
+
+    // AsyncTask to display Favorite movies from database
+    public class FavoriteMovieDisplayTask extends  AsyncTask<Void ,Void,ArrayList<Movie>>{
+
+        private Context mContext;
+
+        public FavoriteMovieDisplayTask(Context context) {
+            mContext = context;
+
+        }
+
+        @Override
+        protected ArrayList<Movie> doInBackground(Void... params) {
+
+            Cursor cursor = mContext.getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, Movie_COLUMNS, null,null,null);
+
+            if(cursor != null) {
+                while (cursor.moveToNext()) {
+                    Movie movie = new Movie(cursor);
+                    movieList.add(movie);
+                }
+            }
+            cursor.close();
+
+            return movieList;
+
+        }
+
+
+        @Override
+        protected void onPostExecute(ArrayList<Movie> movieList) {
+            super.onPostExecute(movieList);
+
+            if(movieList !=null) {
+
+                movieAdapter.clear();
+
+                Movie curMovie;
+                for (int i = 0; i < movieList.size(); i++) {
+                    curMovie = movieList.get(i);
+                    movieAdapter.add(curMovie);
+                }
+
+            }
+            else{
+                // Let the user know that some problem has occurred via a toast
+                Toast.makeText(getContext(),getActivity().getString(R.string.no_movie_data_error) ,Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+
+    }
+
 }

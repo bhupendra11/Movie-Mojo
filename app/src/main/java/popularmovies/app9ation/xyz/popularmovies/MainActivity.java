@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
     @Override
     public void onItemSelected(Movie movie) {
         if (mTwoPane) {
-           /* Bundle arguments = new Bundle();
+            /*Bundle arguments = new Bundle();
             arguments.putParcelable(DetailActivityFragment.DETAIL_MOVIE, movie);
 
             DetailActivityFragment fragment = new DetailActivityFragment();
@@ -32,7 +32,8 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.movie_detail_container, fragment, DetailActivityFragment.TAG)
-                    .commit();*/
+                    .commit();
+                    */
         }
         else {
             Intent intent = new Intent(this, DetailActivity.class)

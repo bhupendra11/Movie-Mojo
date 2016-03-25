@@ -30,6 +30,19 @@
 
     <include layout="@layout/content_detail" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_star_unselected"
+        android:layout_gravity = "bottom|right"
+        app:elevation="4dp"
+        android:onClick="onFabClick"
+
+        />
+
 
 
 </android.support.design.widget.CoordinatorLayout>

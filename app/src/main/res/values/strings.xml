@@ -5,6 +5,7 @@
     <string name="sort_by">Sort By</string>
     <string name="sort_popularity">Most Popular</string>
     <string name="sort_rating">Highest Rated</string>
+    <string name="sort_favorite">Favorites</string>
     <string name="transition_poster">Transitioning Poster</string>
     <string name="no_movie_data_error">Error getting Movie data from server! Check your network and try again!</string>
     <string name="title_activity_portfolio">PortfolioActivity</string>
@@ -13,6 +14,12 @@
     <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
     <string name="title_activity_trailers">Trailers</string>
     <string name="content_desc_video_thumbnail">Trailer thumbnail Image</string>
+
+
+    <string name="movie_add_to_favorites" > Movie successfully added to your favorites </string>
+    <string name="movie_removed_from_favorites">Movie successfully removed from your favorites</string>
+
+    <string name="content_authority" >popularmovies.app9ation.xyz.popularmovies</string>
 
 
 </resources>

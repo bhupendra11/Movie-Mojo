@@ -1,5 +1,6 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -29,6 +30,17 @@ public class Movie implements Parcelable{
         this.popularity = popularity;
         this.vote_avg = vote_avg;
         this.release_year = release_year;
+    }
+
+    // get Movie object from Cursor
+    public Movie(Cursor cursor) {
+        this.id = cursor.getLong(PosterDisplayFragment.COL_MOVIE_ID);
+        this.title = cursor.getString(PosterDisplayFragment.COL_TITLE);
+        this.poster = cursor.getString(PosterDisplayFragment.COL_POSTER);
+        this.backdrop_path = cursor.getString(PosterDisplayFragment.COL_BACKDROP);
+        this.overview = cursor.getString(PosterDisplayFragment.COL_OVERVIEW);
+        this.vote_avg = cursor.getString(PosterDisplayFragment.COL_RATING);
+        this.release_year = cursor.getString(PosterDisplayFragment.COL_DATE);
     }
 
     private Movie(Parcel in){

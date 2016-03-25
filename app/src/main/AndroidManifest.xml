@@ -30,6 +30,19 @@
                 android:value="popularmovies.app9ation.xyz.popularmovies.MainActivity" />
         </activity>
 
+        <!-- Content Provider for saving favorite movies -->
+
+         <provider
+             android:authorities="@string/content_authority"
+             android:multiprocess="true"
+             android:name=".data.MovieProvider"/>
+
+        <!-- CheckMovieInFavoriteService -->
+
+         <service android:name=".service.CheckMovieInFavoritesService">
+
+         </service>
+
     </application>
 
 </manifest>
