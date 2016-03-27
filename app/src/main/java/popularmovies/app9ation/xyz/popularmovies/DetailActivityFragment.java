@@ -1,5 +1,6 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,10 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -38,7 +41,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class DetailActivityFragment extends Fragment implements  View.OnClickListener{
+public class DetailActivityFragment extends Fragment implements  View.OnClickListener {
 
     public static final String TAG = DetailActivityFragment.class.getSimpleName();
 
@@ -53,8 +56,11 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     private String vote_avg;
 
     // Made movie object static so that it can be accessed in  MainActivity's (onRestoreInstanceState) in two-pane UI after onSaveInstanceState call in DetailActivityFragment
-   public static Movie movie;
+    public static Movie movie;
+    private int isFavorite;
+    private Toast mToast;
     private ScrollView mDetailLayout;
+    public Button favButton;
 
 
     //For fething and storing data in detailFragment
@@ -71,28 +77,28 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     private Context mContext;
 
     static String DETAIL_MOVIE = "Detail_Movie";
+    public static final String MOVIE_PARCEL = "Movie_Parcel";
+    public static final String RECEIVER = "Receiver";
 
     //For the UI of reviews and trailers
 
-    ViewGroup mReviewsView ;
-    TextView mReviewsHeader ;
+    ViewGroup mReviewsView;
+    TextView mReviewsHeader;
 
     HorizontalScrollView mTrailersScrollView;
     TextView mTrailersHeader;
     ViewGroup mTrailersView;
 
 
-
     //For checking if Movie in Favorites
-    public static int isFavorite = 0;
+    private int mIsFavorite;
     int numRows = 0;
 
 
     public static final String MOVIE_BUNDLE = "Movie_Bundle";
 
 
-    private  volatile boolean  onAttachDone =false;
-
+    private volatile boolean onAttachDone = false;
 
 
     public DetailActivityFragment() {
@@ -102,21 +108,17 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d(LOG_TAG , "Inside onCreate");
+        Log.d(LOG_TAG, "Inside onCreate");
 
-        if(savedInstanceState != null && savedInstanceState.containsKey(MOVIE_BUNDLE)){
+        if (savedInstanceState != null && savedInstanceState.containsKey(MOVIE_BUNDLE)) {
 
-            Log.d(LOG_TAG,"Using savedInstanceBundle ");
+            Log.d(LOG_TAG, "Using savedInstanceBundle ");
 
-            movie =savedInstanceState.getParcelable(MOVIE_BUNDLE);
+            movie = savedInstanceState.getParcelable(MOVIE_BUNDLE);
         }
 
 
-
-
-
     }
-
 
 
     @Override
@@ -129,172 +131,234 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
 //        Movie movie = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
 
-  //      android.util.Log.d(LOG_TAG , "Movie id = " +movie.id);
+        //      android.util.Log.d(LOG_TAG , "Movie id = " +movie.id);
 
         if (arguments != null) {
 
-                movie = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
+            movie = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
 
-                Log.d(LOG_TAG, "Inside intent.hasExtra()");
+            Log.d(LOG_TAG, "Inside intent.hasExtra()");
 
-                movieID = movie.id;
-                movieTitle = movie.title;
-                backdropImagePath = movie.backdrop_path;
-                posterPath = movie.poster;
-                movieOverview = movie.overview;
-                movieYear = movie.release_year;
-                vote_avg = movie.vote_avg;
-            }
-        else{
-            Log.d(LOG_TAG ,"Arguments are null");
-             }
-
-
-        rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
-
-            mDetailLayout = (ScrollView) rootView.findViewById(R.id.detail_layout);
-
-            if (movie != null) {
-                mDetailLayout.setVisibility(View.VISIBLE);
-            } else {
-                mDetailLayout.setVisibility(View.INVISIBLE);
-                return rootView;
-            }
-            /////////////////////
+            movieID = movie.id;
+            movieTitle = movie.title;
+            backdropImagePath = movie.backdrop_path;
+            posterPath = movie.poster;
+            movieOverview = movie.overview;
+            movieYear = movie.release_year;
+            vote_avg = movie.vote_avg;
+        } else {
+            Log.d(LOG_TAG, "Arguments are null");
+        }
 
 
+        rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        mDetailLayout = (ScrollView) rootView.findViewById(R.id.detail_layout);
 
 
-        Log.d(LOG_TAG,"Inside intent !=null ");
-
-            Log.d(LOG_TAG,"Backdrop Image url: "+backdropImagePath);
-            Log.d(LOG_TAG,"Movie Overview : "+movieOverview);
-            Log.d(LOG_TAG,"Movie Title : "+movieTitle);
-
-            getActivity().setTitle(movieTitle);
-
-
-            ImageView backdropPosterView = (ImageView) rootView.findViewById(R.id.backdropPoster_image);
+        if (movie != null) {
+            mDetailLayout.setVisibility(View.VISIBLE);
+        } else {
+            mDetailLayout.setVisibility(View.INVISIBLE);
+            return rootView;
+        }
 
 
+        Log.d(LOG_TAG, "Inside intent !=null ");
+
+        Log.d(LOG_TAG, "Backdrop Image url: " + backdropImagePath);
+        Log.d(LOG_TAG, "Movie Overview : " + movieOverview);
+        Log.d(LOG_TAG, "Movie Title : " + movieTitle);
+
+        getActivity().setTitle(movieTitle);
 
 
-            ImageView smallPosterView  = (ImageView) rootView.findViewById(R.id.moviePoster_image);
+        ImageView backdropPosterView = (ImageView) rootView.findViewById(R.id.backdropPoster_image);
 
-            backdropPosterView.setAdjustViewBounds(true);
-            backdropPosterView.setPadding(0, 0, 0, 0);
+        ImageView smallPosterView = (ImageView) rootView.findViewById(R.id.moviePoster_image);
 
-            Picasso.with(getContext()).load(backdropImagePath).placeholder(R.drawable.backdrop_placeholder).fit().into(backdropPosterView);
+        backdropPosterView.setAdjustViewBounds(true);
+        backdropPosterView.setPadding(0, 0, 0, 0);
 
-
-            Picasso.with(getContext()).load(posterPath).placeholder(R.drawable.small_poster_placeholder).fit().into(smallPosterView);
-
-            TextView movieOverviewTextview = (TextView) rootView.findViewById(R.id.movie_overview_textView);
-            movieOverviewTextview.setText(movieOverview);
-
-            TextView movieTitleTextView = (TextView) rootView.findViewById(R.id.movieName_textView);
-            movieTitleTextView.setText(movieTitle);
-
-            TextView movieYearTextView = (TextView) rootView.findViewById(R.id.movieYear_textView);
-            movieYearTextView.setText(movieYear);
-
-            TextView movieRatingTextView = (TextView) rootView.findViewById(R.id.rating_textView);
-            movieRatingTextView.setText(vote_avg);
+        Picasso.with(getContext()).load(backdropImagePath).placeholder(R.drawable.backdrop_placeholder).fit().into(backdropPosterView);
 
 
-            Log.d(LOG_TAG, "Loaded the textViews");
+        Picasso.with(getContext()).load(posterPath).placeholder(R.drawable.small_poster_placeholder).fit().into(smallPosterView);
+
+        TextView movieOverviewTextview = (TextView) rootView.findViewById(R.id.movie_overview_textView);
+        movieOverviewTextview.setText(movieOverview);
+
+        TextView movieTitleTextView = (TextView) rootView.findViewById(R.id.movieName_textView);
+        movieTitleTextView.setText(movieTitle);
+
+        TextView movieYearTextView = (TextView) rootView.findViewById(R.id.movieYear_textView);
+        movieYearTextView.setText(movieYear);
+
+        TextView movieRatingTextView = (TextView) rootView.findViewById(R.id.rating_textView);
+        movieRatingTextView.setText(vote_avg);
 
 
-
-            // For textview transitions
-
+        Log.d(LOG_TAG, "Loaded the textViews");
 
 
-            View[] animatedViews = new View[] {
-                    movieTitleTextView, movieYearTextView, movieRatingTextView,  movieOverviewTextview,
-            };
-
-            // see here for using the right interpolator is important:
-            // http://www.google.com/design/spec/animation/authentic-motion.html#authentic-motion-mass-weight
-            // and here for how to use them:
-            // http://developer.android.com/guide/topics/graphics/prop-animation.html#interpolators
-            Interpolator interpolator = new DecelerateInterpolator();
-
-            for (int i = 0; i < animatedViews.length; ++i) {
-                View v = animatedViews[i];
-
-                // let's enable hardware acceleration for better performance
-                // http://blog.danlew.net/2015/10/20/using-hardware-layers-to-improve-animation-performance/
-                v.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-
-                // initial state: hide the view and move it down slightly
-                v.setAlpha(0f);
-                v.setTranslationY(75);
-
-                v.animate()
-                        .setInterpolator(interpolator)
-                        .alpha(1.0f)
-                        .translationY(0)
-                                // this little calculation here produces the staggered effect we
-                                // saw, so each animation starts a bit after the previous one
-                        .setStartDelay(300 + 75 * i)
-                        .start();
-            }
-
-            Log.d(LOG_TAG, "Played the animation of textviews");
+        // For textview transitions
 
 
+        View[] animatedViews = new View[]{
+                movieTitleTextView, movieYearTextView, movieRatingTextView, movieOverviewTextview,
+        };
 
+        // see here for using the right interpolator is important:
+        // http://www.google.com/design/spec/animation/authentic-motion.html#authentic-motion-mass-weight
+        // and here for how to use them:
+        // http://developer.android.com/guide/topics/graphics/prop-animation.html#interpolators
+        Interpolator interpolator = new DecelerateInterpolator();
+
+        for (int i = 0; i < animatedViews.length; ++i) {
+            View v = animatedViews[i];
+
+            // let's enable hardware acceleration for better performance
+            // http://blog.danlew.net/2015/10/20/using-hardware-layers-to-improve-animation-performance/
+            v.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+            // initial state: hide the view and move it down slightly
+            v.setAlpha(0f);
+            v.setTranslationY(75);
+
+            v.animate()
+                    .setInterpolator(interpolator)
+                    .alpha(1.0f)
+                    .translationY(0)
+                    // this little calculation here produces the staggered effect we
+                    // saw, so each animation starts a bit after the previous one
+                    .setStartDelay(300 + 75 * i)
+                    .start();
+        }
+
+        Log.d(LOG_TAG, "Played the animation of textviews");
 
 
         // for displaying list of reviews
 
-            // Retrofit for detail movie calls
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(API_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+        // Retrofit for detail movie calls
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(API_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-            tmdbApi = retrofit.create(TMDBApi.class);
+        tmdbApi = retrofit.create(TMDBApi.class);
 
-            //To wait till onAttach is called
-            while(!onAttachDone)
-            {
-                try {
-                    Thread.sleep(200);
-                    Log.d(LOG_TAG, "Inside thread , waiting fo onAttach()");
-                }
-                catch (InterruptedException e){
-                    Log.d(LOG_TAG, "Wait for onAttch Thread Interrupted");
-                }
+        //To wait till onAttach is called
+        while (!onAttachDone) {
+            try {
+                Thread.sleep(200);
+                Log.d(LOG_TAG, "Inside thread , waiting fo onAttach()");
+            } catch (InterruptedException e) {
+                Log.d(LOG_TAG, "Wait for onAttch Thread Interrupted");
             }
+        }
 
-            Log.d(LOG_TAG , "OnAttachDone is true");
+        Log.d(LOG_TAG, "OnAttachDone is true");
 
-            // Used to set The star for Favorite status
+        // Used to set The star for Favorite status
 
-         try {
+        try {
             IsFavoriteTask isFavoriteTask = new IsFavoriteTask(getContext());
             isFavoriteTask.execute(movie);
 
+            Log.d(LOG_TAG, "IsFavoriteTask executed ");
 
-            } catch (Exception e) {
-               Log.d(LOG_TAG , "Exception in IsFavoriteTask execution : "+ e.getMessage());
+
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "Exception in IsFavoriteTask execution : " + e.getMessage());
+        }
+
+
+        Button favButton = (Button) rootView.findViewById(R.id.fav_Button);
+
+
+
+
+        favButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+               /* Log.d(LOG_TAG, "FavButton OnClick Called");
+
+                myResultReceiver resultReceiver = new myResultReceiver(null);
+
+                Intent intent = new Intent(getActivity(), CheckMovieInFavoritesService.class);
+                // Pass this movie object to CheckMovieInFavoritesService
+                intent.putExtra(MOVIE_PARCEL, movie);
+                intent.putExtra(RECEIVER, resultReceiver);
+                getContext().startService(intent);*/
+
+                DealFavoritesTask dealfavorites = new DealFavoritesTask(getContext());
+                dealfavorites.execute(movie);
+
             }
-
-            getTrailers();
-            getReviews();
+        });
 
 
+        getTrailers();
+        getReviews();
 
-
-
-        return  rootView;
+        return rootView;
     }
+
+
+
+    /* ******************************     OnresultReciever       ****************************************************/
+
+   /* @SuppressLint("ParcelCreator")
+    public class myResultReceiver extends ResultReceiver {
+
+        *//* *
+          * Create a new ResultReceive to receive results.  Your
+          * {@link #onReceiveResult} method will be called from the thread running
+          * <var>handler</var> if given, or from an arbitrary thread if null.
+          *
+          * @param handler
+          *//*
+        public myResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            super.onReceiveResult(resultCode, resultData);
+            isFavorite = resultData.getInt("isFav");
+
+            if (isFavorite == 0) {
+
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                mToast.makeText(getContext(), R.string.movie_removed_from_favorites, Toast.LENGTH_SHORT).show();
+                favButton.setBackgroundResource(R.drawable.not_favorite);
+
+
+            } else if (isFavorite == 1) {
+
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                mToast.makeText(getContext(), R.string.movie_add_to_favorites, Toast.LENGTH_SHORT).show();
+
+                favButton.setBackgroundResource(R.drawable.favorite);
+
+
+            }
+        }
+    }*/
+
+
+    ///////////////////////////////
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(MOVIE_BUNDLE,movie);
+        outState.putParcelable(MOVIE_BUNDLE, movie);
         super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "Inside onSaveInstanceState");
     }
@@ -308,8 +372,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     }
 
     public void getTrailers() {
-
-
 
 
         // For fetching trailers
@@ -327,16 +389,16 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                             "\nKey= " + item.getKey() + ",\nSite = " + item.getSite()
                     );
                 }
-                Log.d(LOG_TAG, "TrailerItems size = "+trailerItems.size());
+                Log.d(LOG_TAG, "TrailerItems size = " + trailerItems.size());
 
                 mTrailersHeader = (TextView) rootView.findViewById(R.id.trailers_heading_textview);
                 mTrailersScrollView = (HorizontalScrollView) rootView.findViewById(R.id.trailer_container);
                 mTrailersView = (ViewGroup) rootView.findViewById(R.id.trailers);
 
                 boolean hasTrailers = !trailerItems.isEmpty();
-                mTrailersHeader.setVisibility(hasTrailers?View.VISIBLE :View.GONE);
-                mTrailersScrollView.setVisibility(hasTrailers?View.VISIBLE:View.GONE);
-                if(hasTrailers){
+                mTrailersHeader.setVisibility(hasTrailers ? View.VISIBLE : View.GONE);
+                mTrailersScrollView.setVisibility(hasTrailers ? View.VISIBLE : View.GONE);
+                if (hasTrailers) {
                     addTrailers(trailerItems);
                 }
 
@@ -355,7 +417,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     }
 
 
-    public void getReviews(){
+    public void getReviews() {
         // For fetching reviews
         callReviews = tmdbApi.getReviews(movieID);
 
@@ -376,7 +438,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
 
                 mReviewsHeader = (TextView) rootView.findViewById(R.id.reviews_heading_textview);
-                mReviewsView  = (ViewGroup) rootView.findViewById(R.id.reviews);
+                mReviewsView = (ViewGroup) rootView.findViewById(R.id.reviews);
 
                 boolean hasReviews = !reviewItems.isEmpty();
                 mReviewsHeader.setVisibility(hasReviews ? View.VISIBLE : View.GONE);
@@ -399,7 +461,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     @Override
     public void onClick(View v) {
 
-        if(v.getId() == R.id.trailer_thumb){  // clicked on the trailer thumbnail , launch youtube intent
+        if (v.getId() == R.id.trailer_thumb) {  // clicked on the trailer thumbnail , launch youtube intent
             String trailerUrl = (String) v.getTag();
             Intent playVideoIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(trailerUrl));
             startActivity(playVideoIntent);
@@ -412,24 +474,24 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         mTrailersView.removeAllViews();
 
 
-      //  LayoutInflater inflater = getActivity().getLayoutInflater();
+        //  LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        LayoutInflater inflater = (LayoutInflater)mContext.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) mContext.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         Picasso picasso = Picasso.with(getActivity());
-        for(MovieTrailer trailer : trailers){
-            ViewGroup trailerContainer = (ViewGroup) inflater.inflate(R.layout.trailer_item, mTrailersView , false);
+        for (MovieTrailer trailer : trailers) {
+            ViewGroup trailerContainer = (ViewGroup) inflater.inflate(R.layout.trailer_item, mTrailersView, false);
 
             ImageView trailerThumbnail = (ImageView) trailerContainer.findViewById(R.id.trailer_thumb);
             trailerThumbnail.setTag(MovieTrailer.getTrailerUrl(trailer));
             trailerThumbnail.setOnClickListener(this);
 
-             picasso.load(MovieTrailer.getThumbnailUrl(trailer))
-                     .resizeDimen(R.dimen.trailer_width , R.dimen.trailer_height)
-                     .centerCrop()
-                     .into(trailerThumbnail);
+            picasso.load(MovieTrailer.getThumbnailUrl(trailer))
+                    .resizeDimen(R.dimen.trailer_width, R.dimen.trailer_height)
+                    .centerCrop()
+                    .into(trailerThumbnail);
 
-        mTrailersView.addView(trailerContainer);
+            mTrailersView.addView(trailerContainer);
 
 
         }
@@ -439,7 +501,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         mReviewsView.removeAllViews();
         //LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        LayoutInflater inflater = (LayoutInflater)mContext.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) mContext.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for (MovieReview review : reviews) {
             ViewGroup reviewContainer = (ViewGroup) inflater.inflate(R.layout.reviews_item, mReviewsView,
@@ -460,134 +522,199 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     }
 
 
+    /*******************   Async Task to check if the given movie is in favorites or not    *****************/
+
     public class IsFavoriteTask extends AsyncTask<Movie, Integer, Integer> {
 
-            private Context mContext;
+        private Context mContext;
+        private int isFavoriteMovie;
 
-            public IsFavoriteTask(Context context) {
-                mContext = context;
+        public IsFavoriteTask(Context context) {
+            mContext = context;
 
-            }
+        }
 
 
-            @Override
-            protected Integer doInBackground(Movie... params) {
+        @Override
+        protected Integer doInBackground(Movie... params) {
 
-                movie = params[0];
+            movie = params[0];
 
          /*
           Check  if Movie is in DB
          */
 
-                Cursor cursor = mContext.getContentResolver().query(
-                        MovieContract.MovieEntry.CONTENT_URI,
-                        null,   //projection
-                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " =?",
-                        new String[]{String.valueOf(movie.getId())},      // selectionArgs : gets the rows with this movieID
-                        null             // Sort order
+            Cursor cursor = mContext.getContentResolver().query(
+                    MovieContract.MovieEntry.CONTENT_URI,
+                    null,   //projection
+                    MovieContract.MovieEntry.COLUMN_MOVIE_ID + " =?",
+                    new String[]{String.valueOf(movie.getId())},      // selectionArgs : gets the rows with this movieID
+                    null             // Sort order
 
+            );
+
+            if (cursor != null) {
+                numRows = cursor.getCount();
+                cursor.close();
+            }
+
+            if (numRows == 1) {    // Inside db
+                Log.d(LOG_TAG, "numRows = 1 , Movie in Favorites");
+
+                isFavoriteMovie = 1;
+            } else {             // Not inside db
+                Log.d(LOG_TAG, "numRows = 0 , Movie not in Favorites");
+
+                isFavoriteMovie = 0;
+            }
+
+            return isFavoriteMovie;
+        }
+
+
+        @Override
+        protected void onPostExecute(Integer isFav) {
+            super.onPostExecute(isFav);
+
+            //getIsFavorite(isFav);
+
+            //Set the icon of Floating action button based on if move in favorites or not
+
+
+            mIsFavorite = isFav;
+            favButton = (Button) rootView.findViewById(R.id.fav_Button);
+
+            if (mIsFavorite == 1) {
+                Log.d(LOG_TAG, "Movie is in Favorites");
+                favButton.setBackgroundResource(R.drawable.favorite);
+            } else if (mIsFavorite == 0) {
+                Log.d(LOG_TAG, "Movie not in Favorites");
+                favButton.setBackgroundResource(R.drawable.not_favorite);
+            }
+
+
+        }
+
+    }
+
+
+
+
+  /*********************************    AsyncTask to handle favButtonClicks    *********************************************** */
+
+
+    public class DealFavoritesTask extends AsyncTask<Movie, Integer, Integer> {
+
+        private Context mContext;
+        private Movie mMovie;
+        private int numRows;
+        private int isFavorite;
+
+        private boolean dealFavResults;
+
+        public DealFavoritesTask(Context context) {
+            mContext = context;
+
+        }
+
+        @Override
+        protected Integer doInBackground(Movie... params) {
+
+            mMovie = params[0];
+
+            if (mMovie != null)
+                Log.d("dealFavorites", "The id of Movie passed is " + mMovie.getId());
+
+
+         /*
+          Check  if Movie is in DB
+         */
+
+            Cursor cursor = mContext.getContentResolver().query(
+                    MovieContract.MovieEntry.CONTENT_URI,
+                    null,   //projection
+                    MovieContract.MovieEntry.COLUMN_MOVIE_ID + " =?",
+                    new String[]{String.valueOf(mMovie.getId())},      // selectionArgs : gets the rows with this movieID
+                    null             // Sort order
+
+            );
+
+            if (cursor != null) {
+                numRows = cursor.getCount();
+                cursor.close();
+            }
+
+
+            if (numRows == 1) {    // Inside db so delete
+
+
+                int delete = mContext.getContentResolver().delete(
+                        MovieContract.MovieEntry.CONTENT_URI,
+                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
+                        new String[]{Long.toString(mMovie.getId())}
                 );
 
-                if (cursor != null) {
-                    numRows = cursor.getCount();
-                    cursor.close();
-                }
+                isFavorite = 0;
+            } else {             // Not inside db so insert
 
-                if (numRows == 1) {    // Inside db
+                ContentValues values = new ContentValues();
+
+                values.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, mMovie.getId());
+                values.put(MovieContract.MovieEntry.COLUMN_TITLE, mMovie.getTitle());
+                values.put(MovieContract.MovieEntry.COLUMN_POSTER, mMovie.getPoster());
+                values.put(MovieContract.MovieEntry.COLUMN_BACKDROP, mMovie.getBackdrop_path());
+                values.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, mMovie.getOverview());
+                values.put(MovieContract.MovieEntry.COLUMN_RATING, mMovie.getVote_avg());
+                values.put(MovieContract.MovieEntry.COLUMN_DATE, mMovie.getRelease_year());
+
+                mContext.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, values);
 
 
-                    isFavorite = 1;
-                } else {             // Not inside db
-
-                    isFavorite = 0;
-                }
-
-                return isFavorite;
+                isFavorite = 1;
             }
+            return  isFavorite;
+
+        }
 
 
-            @Override
-            protected void onPostExecute(Integer isFav) {
-                super.onPostExecute(isFav);
+        @Override
+        protected void onPostExecute(Integer isFav) {
+            super.onPostExecute(isFav);
 
-                //getIsFavorite(isFav);
 
-                //Set the icon of Floating action button based on if move in favorites or not
+            isFavorite = isFav;
 
-                isFavorite = isFav;
+            favButton = (Button) rootView.findViewById(R.id.fav_Button);
 
+            if (isFavorite == 0) {
+
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                mToast.makeText(getContext(), R.string.movie_removed_from_favorites, Toast.LENGTH_SHORT).show();
+                favButton.setBackgroundResource(R.drawable.not_favorite);
+
+
+            } else if (isFavorite == 1) {
+
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                mToast.makeText(getContext(), R.string.movie_add_to_favorites, Toast.LENGTH_SHORT).show();
+
+                favButton.setBackgroundResource(R.drawable.favorite);
 
 
             }
 
         }
 
-       /* public int getIsFavorite(Integer isFav) {
-
-            return isFav;
-        }
-        */
-
-
-
-
+    }
 
 
 }
 
 
 
-    /*// AsyncTask to fetch Trailers and Reviews
-    public class FetchTrailersAndReviews extends AsyncTask<Void ,Void,Void> {
-
-        private Context mContext;
-
-        public FavoriteMovieDisplayTask(Context context) {
-            mContext = context;
-
-        }
-
-        @Override
-        protected ArrayList<Movie> doInBackground(Void... params) {
-
-            Cursor cursor = mContext.getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, Movie_COLUMNS, null,null,null);
-
-            if(cursor != null) {
-                while (cursor.moveToNext()) {
-                    Movie movie = new Movie(cursor);
-                    movieList.add(movie);
-                }
-            }
-            cursor.close();
-
-            return movieList;
-
-        }
-
-
-        @Override
-        protected void onPostExecute(ArrayList<Movie> movieList) {
-            super.onPostExecute(movieList);
-
-            if(movieList !=null) {
-
-                movieAdapter.clear();
-
-                Movie curMovie;
-                for (int i = 0; i < movieList.size(); i++) {
-                    curMovie = movieList.get(i);
-                    movieAdapter.add(curMovie);
-                }
-
-            }
-            else{
-                // Let the user know that some problem has occurred via a toast
-                Toast.makeText(getContext(),getActivity().getString(R.string.no_movie_data_error) ,Toast.LENGTH_SHORT).show();
-            }
-
-
-        }
-
-    }*/
 
 

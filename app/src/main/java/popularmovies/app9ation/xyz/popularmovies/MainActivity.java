@@ -1,19 +1,14 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
-import popularmovies.app9ation.xyz.popularmovies.service.CheckMovieInFavoritesService;
 
 public class MainActivity extends AppCompatActivity implements PosterDisplayFragment.Callback {
 
@@ -23,9 +18,10 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
 
     //For floating action button
     private int isFavorite;
+    private Toast mToast;
     FloatingActionButton fab;
     private Movie mMovie;
-    private Toast mToast;
+
 
     public static final String MOVIE_BUNDLE = "Movie_Bundle";
 
@@ -56,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
             }
 
             // Floating action button onClick handler
+/*
 
             FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.fab);
             myFab.setOnClickListener(new View.OnClickListener() {
@@ -63,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
                    onFabClick(v);
                 }
             });
+*/
 
 
         } else {
@@ -129,13 +127,13 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
 
         Log.d(LOG_TAG , "Inside MainActivity Fab onClick()");
 
-        fab = (FloatingActionButton) view.findViewById(R.id.fab);
+      //  fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
         //  Check if the movie is in the database, if it is in the db , delete it
 
         // If it is not in the database then add it to database
 
-        myResultReceiver resultReceiver =  new myResultReceiver(null);
+       /* myResultReceiver resultReceiver =  new myResultReceiver(null);
 
         Intent intent = new Intent(getApplicationContext(), CheckMovieInFavoritesService.class);
         // Pass this movie object to CheckMovieInFavoritesService
@@ -144,23 +142,23 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
         startService(intent);
 
 
-
+*/
 
 
 
     }
 
 
-    @SuppressLint("ParcelCreator")
+   /* @SuppressLint("ParcelCreator")
     public class myResultReceiver extends ResultReceiver {
 
-       /* *
+       *//* *
          * Create a new ResultReceive to receive results.  Your
          * {@link #onReceiveResult} method will be called from the thread running
          * <var>handler</var> if given, or from an arbitrary thread if null.
          *
          * @param handler
-         */
+         *//*
         public myResultReceiver(Handler handler) {
             super(handler);
         }
@@ -195,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
             }
         }
     }
-
+*/
 
     //Save and restore the mMovie object across orientation change
 

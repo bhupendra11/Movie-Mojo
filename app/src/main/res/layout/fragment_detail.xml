@@ -62,13 +62,6 @@
 
                 android:id="@+id/movieName_textView" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                tools:text="May 2015"
-
-                android:id="@+id/movieYear_textView" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -76,19 +69,47 @@
                 android:orientation="horizontal"
                 tools:background="#12efef"
                 android:clipChildren="false"
+                android:layout_marginRight="16dp"
                 >
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    tools:text="7.1"
-                    android:textSize="30sp"
-                    android:id="@+id/rating_textView" />
+                    android:orientation="vertical"
+                    tools:background="#12efef"
+                    android:clipChildren="false"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        tools:text="May 2015"
+
+                        android:id="@+id/movieYear_textView" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        tools:text="7.1"
+                        android:textSize="30sp"
+                        android:id="@+id/rating_textView" />
 
 
 
+                </LinearLayout>
+                <Button
+                    android:id="@+id/fav_Button"
+                    android:background="@drawable/favorite"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:layout_margin="8dp"
+                    android:layout_gravity="center_vertical"
+                    />
             </LinearLayout>
 
         </LinearLayout>

@@ -1,17 +1,10 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
-
-import popularmovies.app9ation.xyz.popularmovies.service.CheckMovieInFavoritesService;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -45,9 +38,9 @@ public class DetailActivity extends AppCompatActivity {
 
         // Floating action buttononClick handler
 
-        FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.fab);
+       /* FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.fab);
 
-        isFavorite = DetailActivityFragment.isFavorite;
+        isFavorite = DetailActivityFragment.mIsFavorite;
 
         if(isFavorite ==1){  //Movie in favorites
 
@@ -65,7 +58,7 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-
+*/
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -78,6 +71,7 @@ public class DetailActivity extends AppCompatActivity {
     // For floating action button handling
 
 
+/*
     public void onFabClick(View view) {
 
         Log.d(LOG_TAG , "Inside DetailActivity Fab onClick()");
@@ -109,48 +103,9 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
-
-    public class myResultReceiver extends ResultReceiver {
-
-        /**
-         * Create a new ResultReceive to receive results.  Your
-         * {@link #onReceiveResult} method will be called from the thread running
-         * <var>handler</var> if given, or from an arbitrary thread if null.
-         *
-         * @param handler
-         */
-        public myResultReceiver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            super.onReceiveResult(resultCode, resultData);
-            isFavorite = resultData.getInt("isFav");
-
-            if(isFavorite ==0){
-                fab.setImageResource(R.drawable.ic_star_unselected);
+*/
 
 
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                mToast.makeText(getApplicationContext(),R.string.movie_removed_from_favorites, Toast.LENGTH_SHORT ).show();
-
-
-            }
-            else if(isFavorite ==1){
-                fab.setImageResource(R.drawable.ic_star_selected);
-
-
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                mToast.makeText(getApplicationContext(),R.string.movie_add_to_favorites, Toast.LENGTH_SHORT).show();
-
-            }
-        }
-    }
 
 
 

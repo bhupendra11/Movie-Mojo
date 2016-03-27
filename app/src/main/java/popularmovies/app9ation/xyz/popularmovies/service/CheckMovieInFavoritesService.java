@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.os.ResultReceiver;
 
+import popularmovies.app9ation.xyz.popularmovies.DetailActivityFragment;
 import popularmovies.app9ation.xyz.popularmovies.Movie;
 import popularmovies.app9ation.xyz.popularmovies.data.MovieContract;
 import popularmovies.app9ation.xyz.popularmovies.util.Log;
@@ -31,7 +32,7 @@ public class CheckMovieInFavoritesService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        mMovie = intent.getParcelableExtra("MovieParcel");
+        mMovie = intent.getParcelableExtra(DetailActivityFragment.MOVIE_PARCEL);
 
         if(mMovie != null)
         Log.d(LOG_TAG, "The id of Movie passed is "+ mMovie.getId() );
@@ -94,7 +95,7 @@ public class CheckMovieInFavoritesService extends IntentService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        resultReceiver = intent.getParcelableExtra("receiver");
+        resultReceiver = intent.getParcelableExtra(DetailActivityFragment.RECEIVER);
 
         return super.onStartCommand(intent, flags, startId);
     }
