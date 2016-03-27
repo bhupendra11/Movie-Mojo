@@ -3,12 +3,9 @@ package popularmovies.app9ation.xyz.popularmovies;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements PosterDisplayFragment.Callback {
 
@@ -16,10 +13,6 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
     public static boolean mTwoPane ;
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    //For floating action button
-    private int isFavorite;
-    private Toast mToast;
-    FloatingActionButton fab;
     private Movie mMovie;
 
 
@@ -123,77 +116,7 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
     }
 
 
-    public void onFabClick(View view) {
 
-        Log.d(LOG_TAG , "Inside MainActivity Fab onClick()");
-
-      //  fab = (FloatingActionButton) view.findViewById(R.id.fab);
-
-        //  Check if the movie is in the database, if it is in the db , delete it
-
-        // If it is not in the database then add it to database
-
-       /* myResultReceiver resultReceiver =  new myResultReceiver(null);
-
-        Intent intent = new Intent(getApplicationContext(), CheckMovieInFavoritesService.class);
-        // Pass this movie object to CheckMovieInFavoritesService
-        intent.putExtra("MovieParcel", mMovie);
-        intent.putExtra("receiver",resultReceiver);
-        startService(intent);
-
-
-*/
-
-
-
-    }
-
-
-   /* @SuppressLint("ParcelCreator")
-    public class myResultReceiver extends ResultReceiver {
-
-       *//* *
-         * Create a new ResultReceive to receive results.  Your
-         * {@link #onReceiveResult} method will be called from the thread running
-         * <var>handler</var> if given, or from an arbitrary thread if null.
-         *
-         * @param handler
-         *//*
-        public myResultReceiver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            super.onReceiveResult(resultCode, resultData);
-            isFavorite = resultData.getInt("isFav");
-
-            if(isFavorite ==0){
-
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                mToast.makeText(getApplicationContext(),R.string.movie_removed_from_favorites, Toast.LENGTH_SHORT ).show();
-
-                fab.setImageResource(R.drawable.ic_star_unselected);
-
-
-            }
-            else if(isFavorite ==1){
-
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                mToast.makeText(getApplicationContext(),R.string.movie_add_to_favorites, Toast.LENGTH_SHORT).show();
-
-                fab.setImageResource(R.drawable.ic_star_selected);
-
-
-
-            }
-        }
-    }
-*/
 
     //Save and restore the mMovie object across orientation change
 

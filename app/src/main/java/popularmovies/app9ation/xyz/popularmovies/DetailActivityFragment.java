@@ -129,10 +129,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         Bundle arguments = getArguments();
 
 
-//        Movie movie = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
-
-        //      android.util.Log.d(LOG_TAG , "Movie id = " +movie.id);
-
         if (arguments != null) {
 
             movie = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
@@ -283,15 +279,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
             @Override
             public void onClick(View v) {
 
-               /* Log.d(LOG_TAG, "FavButton OnClick Called");
-
-                myResultReceiver resultReceiver = new myResultReceiver(null);
-
-                Intent intent = new Intent(getActivity(), CheckMovieInFavoritesService.class);
-                // Pass this movie object to CheckMovieInFavoritesService
-                intent.putExtra(MOVIE_PARCEL, movie);
-                intent.putExtra(RECEIVER, resultReceiver);
-                getContext().startService(intent);*/
 
                 DealFavoritesTask dealfavorites = new DealFavoritesTask(getContext());
                 dealfavorites.execute(movie);
@@ -308,52 +295,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
 
 
-    /* ******************************     OnresultReciever       ****************************************************/
-
-   /* @SuppressLint("ParcelCreator")
-    public class myResultReceiver extends ResultReceiver {
-
-        *//* *
-          * Create a new ResultReceive to receive results.  Your
-          * {@link #onReceiveResult} method will be called from the thread running
-          * <var>handler</var> if given, or from an arbitrary thread if null.
-          *
-          * @param handler
-          *//*
-        public myResultReceiver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            super.onReceiveResult(resultCode, resultData);
-            isFavorite = resultData.getInt("isFav");
-
-            if (isFavorite == 0) {
-
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                mToast.makeText(getContext(), R.string.movie_removed_from_favorites, Toast.LENGTH_SHORT).show();
-                favButton.setBackgroundResource(R.drawable.not_favorite);
-
-
-            } else if (isFavorite == 1) {
-
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                mToast.makeText(getContext(), R.string.movie_add_to_favorites, Toast.LENGTH_SHORT).show();
-
-                favButton.setBackgroundResource(R.drawable.favorite);
-
-
-            }
-        }
-    }*/
-
-
-    ///////////////////////////////
 
 
     @Override
@@ -427,12 +368,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                 Log.d(LOG_TAG, "Returned API data : " + response.message());
                 allReviews = response.body();
                 reviewItems = allReviews.getReviewsList();
-
-                   /* for (AllReviews.MovieReview item : reviewItems) {
-                        Log.d(LOG_TAG, " Review id = " + item.getId() + "\n Review author= " + item.getAuthor() +
-                                        "\n Content= " + item.getContent() + "\n Url = " + item.getUrl()
-                        );
-                    }*/
 
                 Log.d(LOG_TAG, "ReviewItems size=" + reviewItems.size());
 
@@ -513,8 +448,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
             reviewContent.setText(review.getContent());
             reviewAuthor.setText(review.getAuthor());
-            /*reviewContainer.setOnClickListener(this);
-            reviewContainer.setTag(review);*/
             mReviewsView.addView(reviewContainer);
 
 
@@ -576,7 +509,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         protected void onPostExecute(Integer isFav) {
             super.onPostExecute(isFav);
 
-            //getIsFavorite(isFav);
+
 
             //Set the icon of Floating action button based on if move in favorites or not
 
