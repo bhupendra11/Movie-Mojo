@@ -41,9 +41,7 @@ public class PosterDisplayFragment extends Fragment {
     private MovieAdapter movieAdapter;
     private Movie movie;
     private String FETCH_PARAM ="popular";
-    //private String VOTE_COUNT_MIN ="200";
     private  ArrayList<Movie> movieList = new ArrayList<Movie>();
-    private static final String LOG_TAG = PosterDisplayFragment.class.getSimpleName();
     private boolean isSavedInstance =false;
 
     private static final String[] Movie_COLUMNS = {
@@ -90,7 +88,6 @@ public class PosterDisplayFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if(savedInstanceState != null && savedInstanceState.containsKey("MoviesList")){
-            Log.d(LOG_TAG,"Using savedInstanceBundle ");
             isSavedInstance= true;
             movieList =savedInstanceState.getParcelableArrayList("MoviesList");
         }
@@ -101,7 +98,6 @@ public class PosterDisplayFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
 
         movieAdapter = new MovieAdapter(getActivity() , new ArrayList<Movie>());
 
@@ -136,7 +132,6 @@ public class PosterDisplayFragment extends Fragment {
 
         if(id == R.id.action_sort_popularity){
 
-            Log.d(LOG_TAG , "Sort Acc to Popularity");
             FETCH_PARAM = "popular";
             updateMovies(FETCH_PARAM);
 
@@ -144,13 +139,11 @@ public class PosterDisplayFragment extends Fragment {
 
         if(id== R.id.action_sort_rating){
 
-            Log.d(LOG_TAG , "Sort Acc to Rating");
             FETCH_PARAM = "top_rated";
             updateMovies(FETCH_PARAM);
         }
         if(id== R.id.action_sort_favorite){
             // Query the local db to display favorite movies
-            Log.d(LOG_TAG , "Display only Favorite Movies");
             displayFavorites();
         }
 
@@ -167,7 +160,6 @@ public class PosterDisplayFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(LOG_TAG,"inside onStart");
         if(!isSavedInstance && movieList.isEmpty()) {
             updateMovies(FETCH_PARAM);
         }
@@ -186,7 +178,6 @@ public class PosterDisplayFragment extends Fragment {
 
     public void updateMovies(String sortType){
 
-        Log.d(LOG_TAG, "UpdateMovies called with SortType : " +sortType);
         FetchMovieDataTask movieDataTask = new FetchMovieDataTask();
         movieList.clear();
         movieAdapter.notifyDataSetChanged();
@@ -208,10 +199,6 @@ public class PosterDisplayFragment extends Fragment {
 
     public class FetchMovieDataTask extends AsyncTask<String, Void, ArrayList<Movie>>{
 
-        private final String LOG_TAG = FetchMovieDataTask.class.getSimpleName();
-
-
-
         private ArrayList<Movie> getMoviesPosterDataFromJson(String moviesJsonStr)
                 throws JSONException {
             // These are the names of the JSON objects that need to be extracted.
@@ -232,7 +219,6 @@ public class PosterDisplayFragment extends Fragment {
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
             JSONArray moviesArray = moviesJson.getJSONArray(TMDB_RESULTS);
             // TMDB returns json movie objects
-
 
 
             for(int i = 0; i < moviesArray.length(); i++) {
@@ -280,9 +266,6 @@ public class PosterDisplayFragment extends Fragment {
         @Override
         protected ArrayList<Movie> doInBackground(String... params) {
 
-            Log.d(LOG_TAG, "Inside FetchMovieDataTask's doInBackground method ");
-
-
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
@@ -308,13 +291,8 @@ public class PosterDisplayFragment extends Fragment {
                         .appendQueryParameter(APPID_PARAM, BuildConfig.TMDB_API_KEY)
                         .build();
 
-
-
-
                 URL url = new URL(builtUri.toString());
-                Log.d(LOG_TAG, "Built URI : "+builtUri.toString());
 
-                Log.d(LOG_TAG,"Querying the TMDB Api" );
                 // Create the request to TMDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -345,11 +323,9 @@ public class PosterDisplayFragment extends Fragment {
                     return null;
                 }
                 moviesJsonStr = buffer.toString();
-                //  Log.d(LOG_TAG,"Movies Json String: " +moviesJsonStr+"\n");
             } catch (IOException e) {
 
-                Log.e(LOG_TAG, "Error ", e);
-                // show user with an error message using toast
+                // show user with an error message using toast in onPostExecute
 
                 // If the code didn't successfully get the weather data, there's no point in attempting
                 // to parse it.
@@ -362,7 +338,6 @@ public class PosterDisplayFragment extends Fragment {
                     try {
                         reader.close();
                     } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
 
                     }
                 }
@@ -372,7 +347,6 @@ public class PosterDisplayFragment extends Fragment {
                 return getMoviesPosterDataFromJson(moviesJsonStr);
             }
             catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
 
@@ -386,11 +360,8 @@ public class PosterDisplayFragment extends Fragment {
         protected void onPostExecute(ArrayList<Movie> movieList) {
             super.onPostExecute(movieList);
 
-            Log.d(LOG_TAG, "Inside FetchMovieDataTask's onPostExecute() method ");
 
             if(movieList !=null) {
-
-                Log.d(LOG_TAG, "Inside FetchMovieDataTask's onPostExecute() method : movieList != null");
 
                 movieAdapter.clear();
 

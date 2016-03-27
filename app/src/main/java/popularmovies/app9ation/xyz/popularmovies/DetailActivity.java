@@ -8,8 +8,6 @@ import android.view.Menu;
 public class DetailActivity extends AppCompatActivity {
 
 
-    private static final String LOG_TAG = DetailActivity.class.getSimpleName();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

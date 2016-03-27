@@ -1,14 +1,11 @@
 package popularmovies.app9ation.xyz.popularmovies.util;
 
-import android.util.Log;
-
 /**
  * Created by bhupendra on 25/12/15.
  */
 public class Util {
 
     public static String getMonthYear(String date){
-        Log.d("date",date);
         int monthNo = Integer.parseInt(date.substring(5,7));
         String year = date.substring(0,4);
         String month="";

@@ -17,9 +17,7 @@ import java.util.List;
  */
 public class MovieAdapter extends ArrayAdapter<Movie>
     {
-        //private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
-
-        public MovieAdapter(Activity context, List<Movie> moviePosters){
+          public MovieAdapter(Activity context, List<Movie> moviePosters){
 
             super(context,0, moviePosters);
 

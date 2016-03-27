@@ -36,7 +36,6 @@ import popularmovies.app9ation.xyz.popularmovies.model.AllReviews;
 import popularmovies.app9ation.xyz.popularmovies.model.AllReviews.MovieReview;
 import popularmovies.app9ation.xyz.popularmovies.model.AllTrailers;
 import popularmovies.app9ation.xyz.popularmovies.model.AllTrailers.MovieTrailer;
-import popularmovies.app9ation.xyz.popularmovies.util.Log;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,7 +49,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
     public static final String TAG = DetailActivityFragment.class.getSimpleName();
 
-    private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private Long movieID;
     private String backdropImagePath;
     private String posterPath;
@@ -116,15 +114,9 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d(LOG_TAG, "Inside onCreate");
-
         if (savedInstanceState != null && savedInstanceState.containsKey(MOVIE_BUNDLE)) {
-
-            Log.d(LOG_TAG, "Using savedInstanceBundle ");
-
             movie = savedInstanceState.getParcelable(MOVIE_BUNDLE);
         }
-
 
     }
 
@@ -135,7 +127,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
-
 
         // mShareStr used to share the url of first youtube trailer of movie
         mShareStr = movie.getTitle() + "\n " + "http://www.youtube.com/watch?v="+mTrailer.getKey();
@@ -157,8 +148,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
             movie = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
 
-            Log.d(LOG_TAG, "Inside intent.hasExtra()");
-
             movieID = movie.id;
             movieTitle = movie.title;
             backdropImagePath = movie.backdrop_path;
@@ -166,8 +155,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
             movieOverview = movie.overview;
             movieYear = movie.release_year;
             vote_avg = movie.vote_avg;
-        } else {
-            Log.d(LOG_TAG, "Arguments are null");
         }
 
 
@@ -183,14 +170,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
             return rootView;
         }
 
-
-        Log.d(LOG_TAG, "Inside intent !=null ");
-
-        Log.d(LOG_TAG, "Backdrop Image url: " + backdropImagePath);
-        Log.d(LOG_TAG, "Movie Overview : " + movieOverview);
-        Log.d(LOG_TAG, "Movie Title : " + movieTitle);
-
-       // getActivity().setTitle(movieTitle);
+        getActivity().setTitle(movieTitle);
 
 
         ImageView backdropPosterView = (ImageView) rootView.findViewById(R.id.backdropPoster_image);
@@ -218,10 +198,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         movieRatingTextView.setText(vote_avg);
 
         Button favButton = (Button) rootView.findViewById(R.id.fav_Button);
-
-
-        Log.d(LOG_TAG, "Loaded the textViews");
-
 
         // For textview transitions
 
@@ -257,8 +233,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                     .start();
         }
 
-        Log.d(LOG_TAG, "Played the animation of textviews");
-
 
         // for displaying list of reviews
 
@@ -274,13 +248,10 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         while (!onAttachDone) {
             try {
                 Thread.sleep(200);
-                Log.d(LOG_TAG, "Inside thread , waiting fo onAttach()");
             } catch (InterruptedException e) {
-                Log.d(LOG_TAG, "Wait for onAttch Thread Interrupted");
+              //do nothing
             }
         }
-
-        Log.d(LOG_TAG, "OnAttachDone is true");
 
         // Used to set The star for Favorite status
 
@@ -288,16 +259,9 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
             IsFavoriteTask isFavoriteTask = new IsFavoriteTask(getContext());
             isFavoriteTask.execute(movie);
 
-            Log.d(LOG_TAG, "IsFavoriteTask executed ");
-
-
         } catch (Exception e) {
-            Log.d(LOG_TAG, "Exception in IsFavoriteTask execution : " + e.getMessage());
+          //do nothing
         }
-
-
-
-
 
 
 
@@ -344,7 +308,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(MOVIE_BUNDLE, movie);
         super.onSaveInstanceState(outState);
-        Log.d(LOG_TAG, "Inside onSaveInstanceState");
     }
 
     @Override
@@ -364,7 +327,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         callTrailer.enqueue(new Callback<AllTrailers>() {
             @Override
             public void onResponse(Call<AllTrailers> call, Response<AllTrailers> response) {
-                Log.d(LOG_TAG, "Returned API data : " + response.message());
                 allTrailers = response.body();
                 trailerItems = allTrailers.getTrailerList();
 
@@ -377,14 +339,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                 if (mShareActionProvider != null) {
                     mShareActionProvider.setShareIntent(createShareMovieIntent());
                 }
-
-
-                for (AllTrailers.MovieTrailer item : trailerItems) {
-                    Log.d(LOG_TAG, "Trailer title= " + item.getTrailerTitle() + "\n Trailer id = " + item.getId() + ", " +
-                            "\nKey= " + item.getKey() + ",\nSite = " + item.getSite()
-                    );
-                }
-                Log.d(LOG_TAG, "TrailerItems size = " + trailerItems.size());
 
 
                 mTrailersHeader = (TextView) rootView.findViewById(R.id.trailers_heading_textview);
@@ -404,8 +358,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
             @Override
             public void onFailure(Call<AllTrailers> call, Throwable t) {
 
-                Log.d(LOG_TAG, "Response failed : " + t.getMessage());
-
             }
         });
 
@@ -420,12 +372,9 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         callReviews.enqueue(new Callback<AllReviews>() {
             @Override
             public void onResponse(Call<AllReviews> call, Response<AllReviews> response) {
-                Log.d(LOG_TAG, "Returned API data : " + response.message());
+
                 allReviews = response.body();
                 reviewItems = allReviews.getReviewsList();
-
-                Log.d(LOG_TAG, "ReviewItems size=" + reviewItems.size());
-
 
                 mReviewsHeader = (TextView) rootView.findViewById(R.id.reviews_heading_textview);
                 mReviewsView = (ViewGroup) rootView.findViewById(R.id.reviews);
@@ -441,7 +390,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
             @Override
             public void onFailure(Call<AllReviews> call, Throwable t) {
-                Log.d(LOG_TAG, "Response failed : " + t.getMessage());
+
             }
         });
     }
@@ -546,13 +495,9 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
             }
 
             if (numRows == 1) {    // Inside db
-                Log.d(LOG_TAG, "numRows = 1 , Movie in Favorites");
-
                 isFavoriteMovie = 1;
             } else {             // Not inside db
-                Log.d(LOG_TAG, "numRows = 0 , Movie not in Favorites");
-
-                isFavoriteMovie = 0;
+                 isFavoriteMovie = 0;
             }
 
             return isFavoriteMovie;
@@ -572,10 +517,10 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
             favButton = (Button) rootView.findViewById(R.id.fav_Button);
 
             if (mIsFavorite == 1) {
-                Log.d(LOG_TAG, "Movie is in Favorites");
+
                 favButton.setBackgroundResource(R.drawable.favorite);
             } else if (mIsFavorite == 0) {
-                Log.d(LOG_TAG, "Movie not in Favorites");
+
                 favButton.setBackgroundResource(R.drawable.not_favorite);
             }
 
@@ -608,10 +553,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         protected Integer doInBackground(Movie... params) {
 
             mMovie = params[0];
-
-            if (mMovie != null)
-                Log.d("dealFavorites", "The id of Movie passed is " + mMovie.getId());
-
 
          /*
           Check  if Movie is in DB

@@ -5,22 +5,14 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 public class MainActivity extends AppCompatActivity implements PosterDisplayFragment.Callback {
 
 
     public static boolean mTwoPane ;
-    public static final String LOG_TAG = MainActivity.class.getSimpleName();
-
     private Movie mMovie;
 
-
     public static final String MOVIE_BUNDLE = "Movie_Bundle";
-
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,38 +28,18 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
             // adding or replacing the detail fragment using a
             // fragment transaction.
 
-            Log.d(LOG_TAG,"Inside MainActivity two pane UI");
-
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.movie_detail_container, new DetailActivityFragment(), DetailActivityFragment.TAG)
                         .commit();
             }
 
-            // Floating action button onClick handler
-/*
-
-            FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.fab);
-            myFab.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                   onFabClick(v);
-                }
-            });
-*/
-
-
         } else {
             mTwoPane = false;
         }
 
-
-
-
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
 
     }
 
@@ -75,8 +47,6 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
     @Override
     public void onItemSelected(Movie movie) {
         if (mTwoPane) {
-
-            Log.d(LOG_TAG, "Two pane view");
 
             Bundle arguments = new Bundle();
             arguments.putParcelable(DetailActivityFragment.DETAIL_MOVIE, movie);
@@ -94,21 +64,6 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
             Intent intent = new Intent(this, DetailActivity.class)
                     .putExtra(DetailActivityFragment.DETAIL_MOVIE, movie);
 
-                 /*   ImageView posterView = (ImageView) findViewById(R.id.moviePoster_image);
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-                        ActivityOptionsCompat options =
-                                ActivityOptionsCompat.makeSceneTransitionAnimation(this,
-                                        posterView,   // The view which starts the transition
-                                        getString(R.string.transition_poster) // The transitionName of the view we’re transitioning to
-                                );
-                        ActivityCompat.startActivity(this, intent, options.toBundle());
-
-                    }
-                    else{
-                        startActivity(intent);
-                    } */
-
             startActivity(intent);
 
         }
@@ -125,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         outState.putParcelable(MOVIE_BUNDLE, mMovie);
-        Log.d(LOG_TAG," Inside onSaveInstanceState");
     }
 
 
@@ -137,17 +91,5 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
 
         mMovie = DetailActivityFragment.movie;
 
-        Log.d(LOG_TAG , "Inside onRestoreInstanceState");
     }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(LOG_TAG, "onDestroy Called");
-    }
-
-
-
-
 }

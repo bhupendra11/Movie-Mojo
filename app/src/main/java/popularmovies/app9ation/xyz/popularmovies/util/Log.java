@@ -1,7 +1,7 @@
 package popularmovies.app9ation.xyz.popularmovies.util;
 
 /**
- * Created by eshebhu on 3/18/2016.
+ * Created by Bhupendra Singh on 3/18/2016.
  */
 
 // Wrapper log class to display long string as output data
