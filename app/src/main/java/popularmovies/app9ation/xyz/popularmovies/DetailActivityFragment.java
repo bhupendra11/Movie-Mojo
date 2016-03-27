@@ -8,7 +8,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -57,8 +62,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
     // Made movie object static so that it can be accessed in  MainActivity's (onRestoreInstanceState) in two-pane UI after onSaveInstanceState call in DetailActivityFragment
     public static Movie movie;
-    private int isFavorite;
-    private Toast mToast;
     private ScrollView mDetailLayout;
     public Button favButton;
 
@@ -74,11 +77,19 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     private TMDBApi tmdbApi;
     private View rootView;
 
+
     private Context mContext;
 
     static String DETAIL_MOVIE = "Detail_Movie";
     public static final String MOVIE_PARCEL = "Movie_Parcel";
     public static final String RECEIVER = "Receiver";
+    private Toast mToast;
+
+    //For sharing the youtube trailer
+    public static final String MOVIE_SHARE_HASHTAG = "#PopularMovies";
+    private ShareActionProvider mShareActionProvider;
+    public static String mShareStr;
+    private MovieTrailer mTrailer;
 
     //For the UI of reviews and trailers
 
@@ -121,10 +132,26 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     }
 
 
+    /**********************  Share Intent to create a share action in AppBar   **/
+
+    private Intent createShareMovieIntent(){
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+
+
+        // mShareStr used to share the url of first youtube trailer of movie
+        mShareStr = movie.getTitle() + "\n " + "http://www.youtube.com/watch?v="+mTrailer.getKey();
+
+        shareIntent.putExtra(Intent.EXTRA_TEXT, mShareStr +" \n"+ MOVIE_SHARE_HASHTAG);
+        return  shareIntent;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        setHasOptionsMenu(true);
 
         Bundle arguments = getArguments();
 
@@ -166,7 +193,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         Log.d(LOG_TAG, "Movie Overview : " + movieOverview);
         Log.d(LOG_TAG, "Movie Title : " + movieTitle);
 
-        getActivity().setTitle(movieTitle);
+       // getActivity().setTitle(movieTitle);
 
 
         ImageView backdropPosterView = (ImageView) rootView.findViewById(R.id.backdropPoster_image);
@@ -294,6 +321,23 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     }
 
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.menu_detailfragment, menu);
+
+        // Retrieve the share menu item
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+
+        // Get the provider and hold onto it to set/change the share intent.
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+        if (mTrailer != null) {
+            mShareActionProvider.setShareIntent(createShareMovieIntent());
+        }
+
+    }
+
 
 
 
@@ -325,12 +369,24 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                 allTrailers = response.body();
                 trailerItems = allTrailers.getTrailerList();
 
+                //for shareIntent
+                mTrailer = trailerItems.get(0);
+
+
+                //  Since Trailers are loaded , we can set te ShareActionProvider here
+                // If onCreateOptionsMenu has already happened, we need to update the share intent now.
+                if (mShareActionProvider != null) {
+                    mShareActionProvider.setShareIntent(createShareMovieIntent());
+                }
+
+
                 for (AllTrailers.MovieTrailer item : trailerItems) {
                     Log.d(LOG_TAG, "Trailer title= " + item.getTrailerTitle() + "\n Trailer id = " + item.getId() + ", " +
                             "\nKey= " + item.getKey() + ",\nSite = " + item.getSite()
                     );
                 }
                 Log.d(LOG_TAG, "TrailerItems size = " + trailerItems.size());
+
 
                 mTrailersHeader = (TextView) rootView.findViewById(R.id.trailers_heading_textview);
                 mTrailersScrollView = (HorizontalScrollView) rootView.findViewById(R.id.trailer_container);
@@ -427,7 +483,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                     .into(trailerThumbnail);
 
             mTrailersView.addView(trailerContainer);
-
 
         }
     }

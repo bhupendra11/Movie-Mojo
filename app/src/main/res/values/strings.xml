@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Popular Movies I</string>
     <string name="action_settings">Settings</string>
+    <string name="action_share">Share</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="sort_by">Sort By</string>
     <string name="sort_popularity">Most Popular</string>
