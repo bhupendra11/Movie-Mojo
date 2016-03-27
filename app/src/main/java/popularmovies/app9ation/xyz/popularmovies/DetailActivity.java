@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -19,21 +20,51 @@ public class DetailActivity extends AppCompatActivity {
     private Movie mMovie;
     private Toast mToast;
 
+
+
+    private static final String LOG_TAG = DetailActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Bundle arguments = new Bundle();
-        arguments.putParcelable(DetailActivityFragment.DETAIL_MOVIE,
-                getIntent().getParcelableExtra(DetailActivityFragment.DETAIL_MOVIE));
+        if (savedInstanceState == null) {
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(DetailActivityFragment.DETAIL_MOVIE,
+                    getIntent().getParcelableExtra(DetailActivityFragment.DETAIL_MOVIE));
 
-        DetailActivityFragment fragment = new DetailActivityFragment();
-        fragment.setArguments(arguments);
+            DetailActivityFragment fragment = new DetailActivityFragment();
+            fragment.setArguments(arguments);
 
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.movie_detail_container, fragment)
-                .commit();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.movie_detail_container, fragment)
+                    .commit();
+
+        }
+
+        // Floating action buttononClick handler
+
+        FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.fab);
+
+        isFavorite = DetailActivityFragment.isFavorite;
+
+        if(isFavorite ==1){  //Movie in favorites
+
+
+            myFab.setImageResource(R.drawable.ic_star_selected);
+
+        }
+        else{
+            myFab.setImageResource(R.drawable.ic_star_unselected);
+        }
+
+        myFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onFabClick(v);
+            }
+        });
+
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -43,7 +74,14 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
+
+    // For floating action button handling
+
+
     public void onFabClick(View view) {
+
+        Log.d(LOG_TAG , "Inside DetailActivity Fab onClick()");
+
 
         fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
@@ -55,9 +93,10 @@ public class DetailActivity extends AppCompatActivity {
         mMovie = getIntent().getParcelableExtra(DetailActivityFragment.DETAIL_MOVIE);
 
 
+
         myResultReceiver resultReceiver =  new myResultReceiver(null);
 
-        Intent intent = new Intent(this, CheckMovieInFavoritesService.class);
+        Intent intent = new Intent(getApplicationContext(), CheckMovieInFavoritesService.class);
         // Pass this movie object to CheckMovieInFavoritesService
         intent.putExtra("MovieParcel", mMovie);
         intent.putExtra("receiver",resultReceiver);
@@ -96,7 +135,7 @@ public class DetailActivity extends AppCompatActivity {
                 if (mToast != null) {
                     mToast.cancel();
                 }
-                mToast.makeText(getApplicationContext(),R.string.movie_removed_from_favorites,Toast.LENGTH_SHORT ).show();
+                mToast.makeText(getApplicationContext(),R.string.movie_removed_from_favorites, Toast.LENGTH_SHORT ).show();
 
 
             }
@@ -112,6 +151,15 @@ public class DetailActivity extends AppCompatActivity {
             }
         }
     }
+
+
+
+
+    //For checking if movie in Favorites or not
+
+
+
+
 
 
 

@@ -65,7 +65,7 @@
         android:src="@drawable/ic_star_unselected"
         android:layout_gravity = "bottom|right"
         app:elevation="4dp"
-        android:onClick="onFabClick"
+
 
         />
 

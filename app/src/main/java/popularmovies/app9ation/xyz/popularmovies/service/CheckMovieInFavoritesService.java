@@ -33,6 +33,7 @@ public class CheckMovieInFavoritesService extends IntentService {
 
         mMovie = intent.getParcelableExtra("MovieParcel");
 
+        if(mMovie != null)
         Log.d(LOG_TAG, "The id of Movie passed is "+ mMovie.getId() );
 
 

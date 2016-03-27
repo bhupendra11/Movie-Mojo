@@ -119,6 +119,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginTop="15dp"
+            android:textAppearance="?android:textAppearanceSmall"
 
             />
 
@@ -133,6 +134,7 @@
             android:textAppearance="?android:textAppearanceLarge"
             android:layout_marginTop="16dp"
             android:layout_marginLeft="16dp"
+            android:layout_marginBottom="16dp"
             android:visibility="gone"
             />
 
@@ -141,15 +143,21 @@
             android:layout_height="wrap_content"
             android:id="@+id/trailer_container"
             android:layout_below="@+id/trailers_heading_textview"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:fillViewport="false"
+            android:scrollbarSize="3dp"
+            android:background="#e9e9e9"
+           >
 
             <LinearLayout
                 android:id="@+id/trailers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_margin="16dp"
                 android:clipChildren="false"
                 android:orientation="horizontal"
+
+
 
                 />
 

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -41,6 +42,9 @@ public class MovieAdapter extends ArrayAdapter<Movie>
             posterView.setAdjustViewBounds(true);
             posterView.setPadding(0,0,0,0);
             Picasso.with(getContext()).load(posterUrl).fit().placeholder(R.drawable.poster_placeholder).into(posterView);
+
+            TextView movieNameTextView = (TextView) convertView.findViewById(R.id.movie_poster_name_textview);
+            movieNameTextView.setText(movie.getTitle());
 
 
             return convertView;

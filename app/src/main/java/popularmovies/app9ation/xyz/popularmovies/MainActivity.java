@@ -1,17 +1,36 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.PersistableBundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.ImageView;
+import android.view.View;
+import android.widget.Toast;
+
+import popularmovies.app9ation.xyz.popularmovies.service.CheckMovieInFavoritesService;
 
 public class MainActivity extends AppCompatActivity implements PosterDisplayFragment.Callback {
 
 
     public static boolean mTwoPane ;
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    //For floating action button
+    private int isFavorite;
+    FloatingActionButton fab;
+    private Movie mMovie;
+    private Toast mToast;
+
+    public static final String MOVIE_BUNDLE = "Movie_Bundle";
+
+
+
 
 
     @Override
@@ -35,13 +54,29 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
                         .replace(R.id.movie_detail_container, new DetailActivityFragment(), DetailActivityFragment.TAG)
                         .commit();
             }
+
+            // Floating action button onClick handler
+
+            FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.fab);
+            myFab.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                   onFabClick(v);
+                }
+            });
+
+
         } else {
             mTwoPane = false;
         }
 
 
+
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
 
     }
 
@@ -49,8 +84,13 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
     @Override
     public void onItemSelected(Movie movie) {
         if (mTwoPane) {
+
+            Log.d(LOG_TAG, "Two pane view");
+
             Bundle arguments = new Bundle();
             arguments.putParcelable(DetailActivityFragment.DETAIL_MOVIE, movie);
+
+            mMovie = movie;
 
             DetailActivityFragment fragment = new DetailActivityFragment();
             fragment.setArguments(arguments);
@@ -63,28 +103,130 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
             Intent intent = new Intent(this, DetailActivity.class)
                     .putExtra(DetailActivityFragment.DETAIL_MOVIE, movie);
 
-            ImageView posterView = (ImageView) findViewById(R.id.moviePoster_image);
+                 /*   ImageView posterView = (ImageView) findViewById(R.id.moviePoster_image);
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
+                        ActivityOptionsCompat options =
+                                ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                                        posterView,   // The view which starts the transition
+                                        getString(R.string.transition_poster) // The transitionName of the view we’re transitioning to
+                                );
+                        ActivityCompat.startActivity(this, intent, options.toBundle());
 
-        /*    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    }
+                    else{
+                        startActivity(intent);
+                    } */
 
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(this,
-                                posterView,   // The view which starts the transition
-                                getString(R.string.transition_poster) // The transitionName of the view we’re transitioning to
-                        );
-                ActivityCompat.startActivity(this, intent, options.toBundle());
-
-            }
-            else{
-                startActivity(intent);
-            }
-*/
             startActivity(intent);
 
         }
 
     }
+
+
+    public void onFabClick(View view) {
+
+        Log.d(LOG_TAG , "Inside MainActivity Fab onClick()");
+
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
+
+        //  Check if the movie is in the database, if it is in the db , delete it
+
+        // If it is not in the database then add it to database
+
+        myResultReceiver resultReceiver =  new myResultReceiver(null);
+
+        Intent intent = new Intent(getApplicationContext(), CheckMovieInFavoritesService.class);
+        // Pass this movie object to CheckMovieInFavoritesService
+        intent.putExtra("MovieParcel", mMovie);
+        intent.putExtra("receiver",resultReceiver);
+        startService(intent);
+
+
+
+
+
+
+    }
+
+
+    @SuppressLint("ParcelCreator")
+    public class myResultReceiver extends ResultReceiver {
+
+       /* *
+         * Create a new ResultReceive to receive results.  Your
+         * {@link #onReceiveResult} method will be called from the thread running
+         * <var>handler</var> if given, or from an arbitrary thread if null.
+         *
+         * @param handler
+         */
+        public myResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            super.onReceiveResult(resultCode, resultData);
+            isFavorite = resultData.getInt("isFav");
+
+            if(isFavorite ==0){
+
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                mToast.makeText(getApplicationContext(),R.string.movie_removed_from_favorites, Toast.LENGTH_SHORT ).show();
+
+                fab.setImageResource(R.drawable.ic_star_unselected);
+
+
+            }
+            else if(isFavorite ==1){
+
+                if (mToast != null) {
+                    mToast.cancel();
+                }
+                mToast.makeText(getApplicationContext(),R.string.movie_add_to_favorites, Toast.LENGTH_SHORT).show();
+
+                fab.setImageResource(R.drawable.ic_star_selected);
+
+
+
+            }
+        }
+    }
+
+
+    //Save and restore the mMovie object across orientation change
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putParcelable(MOVIE_BUNDLE, mMovie);
+        Log.d(LOG_TAG," Inside onSaveInstanceState");
+    }
+
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // static Movie object in DetailActivityFragment so that it can be accessed here in two-pane UI after onSaveInstanceState call in DetailActivityFragment
+
+        mMovie = DetailActivityFragment.movie;
+
+        Log.d(LOG_TAG , "Inside onRestoreInstanceState");
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(LOG_TAG, "onDestroy Called");
+    }
+
+
 
 
 }

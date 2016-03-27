@@ -15,7 +15,6 @@
 
 
 
-
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -39,7 +38,7 @@
         android:src="@drawable/ic_star_unselected"
         android:layout_gravity = "bottom|right"
         app:elevation="4dp"
-        android:onClick="onFabClick"
+
 
         />
 

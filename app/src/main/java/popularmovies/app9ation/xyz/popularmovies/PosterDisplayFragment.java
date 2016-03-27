@@ -136,6 +136,7 @@ public class PosterDisplayFragment extends Fragment {
 
         if(id == R.id.action_sort_popularity){
 
+            Log.d(LOG_TAG , "Sort Acc to Popularity");
             SORT_PARAM = "popularity.desc";
             updateMovies(SORT_PARAM);
 
@@ -143,11 +144,13 @@ public class PosterDisplayFragment extends Fragment {
 
         if(id== R.id.action_sort_rating){
 
+            Log.d(LOG_TAG , "Sort Acc to Rating");
             SORT_PARAM = "vote_average.desc";
             updateMovies(SORT_PARAM);
         }
         if(id== R.id.action_sort_favorite){
             // Query the local db to display favorite movies
+            Log.d(LOG_TAG , "Display only Favorite Movies");
             displayFavorites();
         }
 
@@ -182,6 +185,8 @@ public class PosterDisplayFragment extends Fragment {
     }
 
     public void updateMovies(String sortType){
+
+        Log.d(LOG_TAG, "UpdateMovies called with SortType : " +sortType);
         FetchMovieDataTask movieDataTask = new FetchMovieDataTask();
         movieList.clear();
         movieAdapter.notifyDataSetChanged();
@@ -204,6 +209,8 @@ public class PosterDisplayFragment extends Fragment {
     public class FetchMovieDataTask extends AsyncTask<String, Void, ArrayList<Movie>>{
 
         private final String LOG_TAG = FetchMovieDataTask.class.getSimpleName();
+
+
 
         private ArrayList<Movie> getMoviesPosterDataFromJson(String moviesJsonStr)
                 throws JSONException {
@@ -272,6 +279,8 @@ public class PosterDisplayFragment extends Fragment {
 
         @Override
         protected ArrayList<Movie> doInBackground(String... params) {
+
+            Log.d(LOG_TAG, "Inside FetchMovieDataTask's doInBackground method ");
 
 
             // These two need to be declared outside the try/catch
@@ -380,7 +389,11 @@ public class PosterDisplayFragment extends Fragment {
         protected void onPostExecute(ArrayList<Movie> movieList) {
             super.onPostExecute(movieList);
 
+            Log.d(LOG_TAG, "Inside FetchMovieDataTask's onPostExecute() method ");
+
             if(movieList !=null) {
+
+                Log.d(LOG_TAG, "Inside FetchMovieDataTask's onPostExecute() method : movieList != null");
 
                 movieAdapter.clear();
 

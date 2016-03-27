@@ -1,10 +1,11 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import popularmovies.app9ation.xyz.popularmovies.MovieService.TMDBApi;
+import popularmovies.app9ation.xyz.popularmovies.data.MovieContract;
 import popularmovies.app9ation.xyz.popularmovies.model.AllReviews;
 import popularmovies.app9ation.xyz.popularmovies.model.AllReviews.MovieReview;
 import popularmovies.app9ation.xyz.popularmovies.model.AllTrailers;
@@ -50,7 +52,8 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     private String movieYear;
     private String vote_avg;
 
-    private Movie movie;
+    // Made movie object static so that it can be accessed in  MainActivity's (onRestoreInstanceState) in two-pane UI after onSaveInstanceState call in DetailActivityFragment
+   public static Movie movie;
     private ScrollView mDetailLayout;
 
 
@@ -65,7 +68,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     private TMDBApi tmdbApi;
     private View rootView;
 
-    private Activity mContext;
+    private Context mContext;
 
     static String DETAIL_MOVIE = "Detail_Movie";
 
@@ -78,6 +81,20 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     TextView mTrailersHeader;
     ViewGroup mTrailersView;
 
+
+
+    //For checking if Movie in Favorites
+    public static int isFavorite = 0;
+    int numRows = 0;
+
+
+    public static final String MOVIE_BUNDLE = "Movie_Bundle";
+
+
+    private  volatile boolean  onAttachDone =false;
+
+
+
     public DetailActivityFragment() {
     }
 
@@ -85,13 +102,18 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-    /*    if(savedInstanceState != null && savedInstanceState.containsKey("movieParcel")){
+        Log.d(LOG_TAG , "Inside onCreate");
+
+        if(savedInstanceState != null && savedInstanceState.containsKey(MOVIE_BUNDLE)){
 
             Log.d(LOG_TAG,"Using savedInstanceBundle ");
 
-            movie =savedInstanceState.getParcelable("movieParcel");
+            movie =savedInstanceState.getParcelable(MOVIE_BUNDLE);
         }
-*/
+
+
+
+
 
     }
 
@@ -222,7 +244,10 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
             Log.d(LOG_TAG, "Played the animation of textviews");
 
 
-            // for displaying list of reviews
+
+
+
+        // for displaying list of reviews
 
             // Retrofit for detail movie calls
             Retrofit retrofit = new Retrofit.Builder()
@@ -231,6 +256,31 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                     .build();
 
             tmdbApi = retrofit.create(TMDBApi.class);
+
+            //To wait till onAttach is called
+            while(!onAttachDone)
+            {
+                try {
+                    Thread.sleep(200);
+                    Log.d(LOG_TAG, "Inside thread , waiting fo onAttach()");
+                }
+                catch (InterruptedException e){
+                    Log.d(LOG_TAG, "Wait for onAttch Thread Interrupted");
+                }
+            }
+
+            Log.d(LOG_TAG , "OnAttachDone is true");
+
+            // Used to set The star for Favorite status
+
+         try {
+            IsFavoriteTask isFavoriteTask = new IsFavoriteTask(getContext());
+            isFavoriteTask.execute(movie);
+
+
+            } catch (Exception e) {
+               Log.d(LOG_TAG , "Exception in IsFavoriteTask execution : "+ e.getMessage());
+            }
 
             getTrailers();
             getReviews();
@@ -242,14 +292,24 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         return  rootView;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(MOVIE_BUNDLE,movie);
+        super.onSaveInstanceState(outState);
+        Log.d(LOG_TAG, "Inside onSaveInstanceState");
+    }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
+        mContext = context;
+        onAttachDone = true;
     }
 
     public void getTrailers() {
+
+
 
 
         // For fetching trailers
@@ -351,7 +411,11 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     private void addTrailers(List<MovieTrailer> trailers) {
         mTrailersView.removeAllViews();
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+      //  LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        LayoutInflater inflater = (LayoutInflater)mContext.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         Picasso picasso = Picasso.with(getActivity());
         for(MovieTrailer trailer : trailers){
             ViewGroup trailerContainer = (ViewGroup) inflater.inflate(R.layout.trailer_item, mTrailersView , false);
@@ -373,7 +437,10 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
     private void addReviews(List<MovieReview> reviews) {
         mReviewsView.removeAllViews();
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        //LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        LayoutInflater inflater = (LayoutInflater)mContext.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         for (MovieReview review : reviews) {
             ViewGroup reviewContainer = (ViewGroup) inflater.inflate(R.layout.reviews_item, mReviewsView,
                     false);
@@ -381,19 +448,146 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
             TextView reviewAuthor = (TextView) reviewContainer.findViewById(R.id.review_author_textView);
             TextView reviewContent = (TextView) reviewContainer.findViewById(R.id.review_content_textView);
-            reviewAuthor.setText(review.getAuthor());
+
             reviewContent.setText(review.getContent());
+            reviewAuthor.setText(review.getAuthor());
             /*reviewContainer.setOnClickListener(this);
             reviewContainer.setTag(review);*/
             mReviewsView.addView(reviewContainer);
-
-
 
 
         }
     }
 
 
+    public class IsFavoriteTask extends AsyncTask<Movie, Integer, Integer> {
+
+            private Context mContext;
+
+            public IsFavoriteTask(Context context) {
+                mContext = context;
+
+            }
+
+
+            @Override
+            protected Integer doInBackground(Movie... params) {
+
+                movie = params[0];
+
+         /*
+          Check  if Movie is in DB
+         */
+
+                Cursor cursor = mContext.getContentResolver().query(
+                        MovieContract.MovieEntry.CONTENT_URI,
+                        null,   //projection
+                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " =?",
+                        new String[]{String.valueOf(movie.getId())},      // selectionArgs : gets the rows with this movieID
+                        null             // Sort order
+
+                );
+
+                if (cursor != null) {
+                    numRows = cursor.getCount();
+                    cursor.close();
+                }
+
+                if (numRows == 1) {    // Inside db
+
+
+                    isFavorite = 1;
+                } else {             // Not inside db
+
+                    isFavorite = 0;
+                }
+
+                return isFavorite;
+            }
+
+
+            @Override
+            protected void onPostExecute(Integer isFav) {
+                super.onPostExecute(isFav);
+
+                //getIsFavorite(isFav);
+
+                //Set the icon of Floating action button based on if move in favorites or not
+
+                isFavorite = isFav;
+
+
+
+            }
+
+        }
+
+       /* public int getIsFavorite(Integer isFav) {
+
+            return isFav;
+        }
+        */
+
+
+
+
 
 
 }
+
+
+
+    /*// AsyncTask to fetch Trailers and Reviews
+    public class FetchTrailersAndReviews extends AsyncTask<Void ,Void,Void> {
+
+        private Context mContext;
+
+        public FavoriteMovieDisplayTask(Context context) {
+            mContext = context;
+
+        }
+
+        @Override
+        protected ArrayList<Movie> doInBackground(Void... params) {
+
+            Cursor cursor = mContext.getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, Movie_COLUMNS, null,null,null);
+
+            if(cursor != null) {
+                while (cursor.moveToNext()) {
+                    Movie movie = new Movie(cursor);
+                    movieList.add(movie);
+                }
+            }
+            cursor.close();
+
+            return movieList;
+
+        }
+
+
+        @Override
+        protected void onPostExecute(ArrayList<Movie> movieList) {
+            super.onPostExecute(movieList);
+
+            if(movieList !=null) {
+
+                movieAdapter.clear();
+
+                Movie curMovie;
+                for (int i = 0; i < movieList.size(); i++) {
+                    curMovie = movieList.get(i);
+                    movieAdapter.add(curMovie);
+                }
+
+            }
+            else{
+                // Let the user know that some problem has occurred via a toast
+                Toast.makeText(getContext(),getActivity().getString(R.string.no_movie_data_error) ,Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+
+    }*/
+
+
