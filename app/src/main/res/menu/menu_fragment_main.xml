@@ -6,7 +6,7 @@
     <item
             android:id="@+id/action_sortBy"
             app:showAsAction="always"
-            android:icon="@drawable/ic_reorder_white_48dp"
+            android:icon="@drawable/symbols"
             android:title="@string/sort_by" >
 
         <menu>

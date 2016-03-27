@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:padding="8dp"
+                android:padding="10dp"
                 android:id="@+id/movie_poster_name_textview"
                 android:ellipsize="end"
                 android:singleLine="true"/>

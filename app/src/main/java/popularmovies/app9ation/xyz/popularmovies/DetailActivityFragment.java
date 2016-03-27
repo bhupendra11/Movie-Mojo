@@ -53,7 +53,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private Long movieID;
     private String backdropImagePath;
-    private String smallPosterPath;
     private String posterPath;
     private String movieOverview;
     private String movieTitle;
@@ -81,8 +80,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     private Context mContext;
 
     static String DETAIL_MOVIE = "Detail_Movie";
-    public static final String MOVIE_PARCEL = "Movie_Parcel";
-    public static final String RECEIVER = "Receiver";
     private Toast mToast;
 
     //For sharing the youtube trailer
@@ -220,6 +217,8 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         TextView movieRatingTextView = (TextView) rootView.findViewById(R.id.rating_textView);
         movieRatingTextView.setText(vote_avg);
 
+        Button favButton = (Button) rootView.findViewById(R.id.fav_Button);
+
 
         Log.d(LOG_TAG, "Loaded the textViews");
 
@@ -228,7 +227,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
 
         View[] animatedViews = new View[]{
-                movieTitleTextView, movieYearTextView, movieRatingTextView, movieOverviewTextview,
+                movieTitleTextView, movieYearTextView, movieRatingTextView,favButton, movieOverviewTextview,
         };
 
         // see here for using the right interpolator is important:
@@ -297,7 +296,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         }
 
 
-        Button favButton = (Button) rootView.findViewById(R.id.fav_Button);
+
 
 
 

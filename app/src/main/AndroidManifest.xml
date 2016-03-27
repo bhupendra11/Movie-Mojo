@@ -39,10 +39,6 @@
 
         <!-- CheckMovieInFavoriteService -->
 
-         <service android:name=".service.CheckMovieInFavoritesService">
-
-         </service>
-
     </application>
 
 </manifest>

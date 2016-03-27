@@ -40,8 +40,8 @@ import popularmovies.app9ation.xyz.popularmovies.util.Util;
 public class PosterDisplayFragment extends Fragment {
     private MovieAdapter movieAdapter;
     private Movie movie;
-    private String SORT_PARAM ="popularity.desc";
-    private String VOTE_COUNT_MIN ="200";
+    private String FETCH_PARAM ="popular";
+    //private String VOTE_COUNT_MIN ="200";
     private  ArrayList<Movie> movieList = new ArrayList<Movie>();
     private static final String LOG_TAG = PosterDisplayFragment.class.getSimpleName();
     private boolean isSavedInstance =false;
@@ -137,16 +137,16 @@ public class PosterDisplayFragment extends Fragment {
         if(id == R.id.action_sort_popularity){
 
             Log.d(LOG_TAG , "Sort Acc to Popularity");
-            SORT_PARAM = "popularity.desc";
-            updateMovies(SORT_PARAM);
+            FETCH_PARAM = "popular";
+            updateMovies(FETCH_PARAM);
 
         }
 
         if(id== R.id.action_sort_rating){
 
             Log.d(LOG_TAG , "Sort Acc to Rating");
-            SORT_PARAM = "vote_average.desc";
-            updateMovies(SORT_PARAM);
+            FETCH_PARAM = "top_rated";
+            updateMovies(FETCH_PARAM);
         }
         if(id== R.id.action_sort_favorite){
             // Query the local db to display favorite movies
@@ -169,7 +169,7 @@ public class PosterDisplayFragment extends Fragment {
         super.onStart();
         Log.d(LOG_TAG,"inside onStart");
         if(!isSavedInstance && movieList.isEmpty()) {
-            updateMovies(SORT_PARAM);
+            updateMovies(FETCH_PARAM);
         }
         else if(movieList !=null) {
 
@@ -299,16 +299,13 @@ public class PosterDisplayFragment extends Fragment {
                 // Construct the URL for the TMDB query
                 // Possible parameters are available at TMDB's  API page, at
 
+                final String FETCH_TYPE = params[0];
+                final String FORECAST_BASE_URL = "http://api.themoviedb.org/3/movie/"+  FETCH_TYPE  +"?";
 
-                final String FORECAST_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
-                final String SORT_PARAM = "sort_by";
                 final String APPID_PARAM = "api_key";
-                final String VOTE_COUNT_GREATER ="vote_count.gte";
 
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-                        .appendQueryParameter(SORT_PARAM,params[0])
                         .appendQueryParameter(APPID_PARAM, BuildConfig.TMDB_API_KEY)
-                        .appendQueryParameter(VOTE_COUNT_GREATER,VOTE_COUNT_MIN)
                         .build();
 
 
