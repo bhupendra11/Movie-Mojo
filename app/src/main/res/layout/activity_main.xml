@@ -14,6 +14,7 @@
 
 
         <android.support.v7.widget.Toolbar
+            android:logo="@mipmap/icon_launcher"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:elevation="4dp"

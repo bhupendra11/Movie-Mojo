@@ -1,11 +1,8 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -31,7 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import popularmovies.app9ation.xyz.popularmovies.MovieService.TMDBApi;
-import popularmovies.app9ation.xyz.popularmovies.data.MovieContract;
+import popularmovies.app9ation.xyz.popularmovies.asyncTasks.DealFavoritesTask;
+import popularmovies.app9ation.xyz.popularmovies.asyncTasks.IsFavoriteTask;
 import popularmovies.app9ation.xyz.popularmovies.model.AllReviews;
 import popularmovies.app9ation.xyz.popularmovies.model.AllReviews.MovieReview;
 import popularmovies.app9ation.xyz.popularmovies.model.AllTrailers;
@@ -244,19 +242,19 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
         tmdbApi = retrofit.create(TMDBApi.class);
 
-        //To wait till onAttach is called
+       /* //To wait till onAttach is called
         while (!onAttachDone) {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
               //do nothing
             }
-        }
+        }*/
 
         // Used to set The star for Favorite status
 
         try {
-            IsFavoriteTask isFavoriteTask = new IsFavoriteTask(getContext());
+            IsFavoriteTask isFavoriteTask = new IsFavoriteTask(getContext(), rootView);
             isFavoriteTask.execute(movie);
 
         } catch (Exception e) {
@@ -270,7 +268,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
             public void onClick(View v) {
 
 
-                DealFavoritesTask dealfavorites = new DealFavoritesTask(getContext());
+                DealFavoritesTask dealfavorites = new DealFavoritesTask(getContext(), rootView);
                 dealfavorites.execute(movie);
 
             }
@@ -458,186 +456,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     }
 
 
-    /*******************   Async Task to check if the given movie is in favorites or not    *****************/
 
-    public class IsFavoriteTask extends AsyncTask<Movie, Integer, Integer> {
-
-        private Context mContext;
-        private int isFavoriteMovie;
-
-        public IsFavoriteTask(Context context) {
-            mContext = context;
-
-        }
-
-
-        @Override
-        protected Integer doInBackground(Movie... params) {
-
-            movie = params[0];
-
-         /*
-          Check  if Movie is in DB
-         */
-
-            Cursor cursor = mContext.getContentResolver().query(
-                    MovieContract.MovieEntry.CONTENT_URI,
-                    null,   //projection
-                    MovieContract.MovieEntry.COLUMN_MOVIE_ID + " =?",
-                    new String[]{String.valueOf(movie.getId())},      // selectionArgs : gets the rows with this movieID
-                    null             // Sort order
-
-            );
-
-            if (cursor != null) {
-                numRows = cursor.getCount();
-                cursor.close();
-            }
-
-            if (numRows == 1) {    // Inside db
-                isFavoriteMovie = 1;
-            } else {             // Not inside db
-                 isFavoriteMovie = 0;
-            }
-
-            return isFavoriteMovie;
-        }
-
-
-        @Override
-        protected void onPostExecute(Integer isFav) {
-            super.onPostExecute(isFav);
-
-
-
-            //Set the icon of Floating action button based on if move in favorites or not
-
-
-            mIsFavorite = isFav;
-            favButton = (Button) rootView.findViewById(R.id.fav_Button);
-
-            if (mIsFavorite == 1) {
-
-                favButton.setBackgroundResource(R.drawable.favorite);
-            } else if (mIsFavorite == 0) {
-
-                favButton.setBackgroundResource(R.drawable.not_favorite);
-            }
-
-
-        }
-
-    }
-
-
-
-
-  /*********************************    AsyncTask to handle favButtonClicks    *********************************************** */
-
-
-    public class DealFavoritesTask extends AsyncTask<Movie, Integer, Integer> {
-
-        private Context mContext;
-        private Movie mMovie;
-        private int numRows;
-        private int isFavorite;
-
-        private boolean dealFavResults;
-
-        public DealFavoritesTask(Context context) {
-            mContext = context;
-
-        }
-
-        @Override
-        protected Integer doInBackground(Movie... params) {
-
-            mMovie = params[0];
-
-         /*
-          Check  if Movie is in DB
-         */
-
-            Cursor cursor = mContext.getContentResolver().query(
-                    MovieContract.MovieEntry.CONTENT_URI,
-                    null,   //projection
-                    MovieContract.MovieEntry.COLUMN_MOVIE_ID + " =?",
-                    new String[]{String.valueOf(mMovie.getId())},      // selectionArgs : gets the rows with this movieID
-                    null             // Sort order
-
-            );
-
-            if (cursor != null) {
-                numRows = cursor.getCount();
-                cursor.close();
-            }
-
-
-            if (numRows == 1) {    // Inside db so delete
-
-
-                int delete = mContext.getContentResolver().delete(
-                        MovieContract.MovieEntry.CONTENT_URI,
-                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
-                        new String[]{Long.toString(mMovie.getId())}
-                );
-
-                isFavorite = 0;
-            } else {             // Not inside db so insert
-
-                ContentValues values = new ContentValues();
-
-                values.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, mMovie.getId());
-                values.put(MovieContract.MovieEntry.COLUMN_TITLE, mMovie.getTitle());
-                values.put(MovieContract.MovieEntry.COLUMN_POSTER, mMovie.getPoster());
-                values.put(MovieContract.MovieEntry.COLUMN_BACKDROP, mMovie.getBackdrop_path());
-                values.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, mMovie.getOverview());
-                values.put(MovieContract.MovieEntry.COLUMN_RATING, mMovie.getVote_avg());
-                values.put(MovieContract.MovieEntry.COLUMN_DATE, mMovie.getRelease_year());
-
-                mContext.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, values);
-
-
-                isFavorite = 1;
-            }
-            return  isFavorite;
-
-        }
-
-
-        @Override
-        protected void onPostExecute(Integer isFav) {
-            super.onPostExecute(isFav);
-
-
-            isFavorite = isFav;
-
-            favButton = (Button) rootView.findViewById(R.id.fav_Button);
-
-            if (isFavorite == 0) {
-
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                mToast.makeText(getContext(), R.string.movie_removed_from_favorites, Toast.LENGTH_SHORT).show();
-                favButton.setBackgroundResource(R.drawable.not_favorite);
-
-
-            } else if (isFavorite == 1) {
-
-                if (mToast != null) {
-                    mToast.cancel();
-                }
-                mToast.makeText(getContext(), R.string.movie_add_to_favorites, Toast.LENGTH_SHORT).show();
-
-                favButton.setBackgroundResource(R.drawable.favorite);
-
-
-            }
-
-        }
-
-    }
 
 
 }

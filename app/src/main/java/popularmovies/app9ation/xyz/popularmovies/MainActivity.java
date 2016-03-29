@@ -40,6 +40,9 @@ public class MainActivity extends AppCompatActivity implements PosterDisplayFrag
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.icon_launcher);
+
 
     }
 

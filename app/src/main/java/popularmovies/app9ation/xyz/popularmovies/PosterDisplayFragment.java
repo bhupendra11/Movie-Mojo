@@ -1,13 +1,8 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,22 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
+import popularmovies.app9ation.xyz.popularmovies.asyncTasks.FavoriteMovieDisplayTask;
+import popularmovies.app9ation.xyz.popularmovies.asyncTasks.FetchMovieDataTask;
 import popularmovies.app9ation.xyz.popularmovies.data.MovieContract;
-import popularmovies.app9ation.xyz.popularmovies.util.Util;
 
 
 /**
@@ -178,7 +163,7 @@ public class PosterDisplayFragment extends Fragment {
 
     public void updateMovies(String sortType){
 
-        FetchMovieDataTask movieDataTask = new FetchMovieDataTask();
+        FetchMovieDataTask movieDataTask = new FetchMovieDataTask(getContext(), getActivity(), movieAdapter);
         movieList.clear();
         movieAdapter.notifyDataSetChanged();
         movieDataTask.execute(sortType);
@@ -186,7 +171,7 @@ public class PosterDisplayFragment extends Fragment {
 
     public void displayFavorites(){
 
-       FavoriteMovieDisplayTask favoriteMovieDisplayTask = new FavoriteMovieDisplayTask(getActivity());
+       FavoriteMovieDisplayTask favoriteMovieDisplayTask = new FavoriteMovieDisplayTask(getContext(),getActivity() , Movie_COLUMNS, movieAdapter);
         movieList.clear();
         movieAdapter.notifyDataSetChanged();
         favoriteMovieDisplayTask.execute();
@@ -195,9 +180,15 @@ public class PosterDisplayFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+       // movieAdapter.notifyDataSetChanged();
+
+    }
 
 
-    public class FetchMovieDataTask extends AsyncTask<String, Void, ArrayList<Movie>>{
+    /*   public class FetchMovieDataTask extends AsyncTask<String, Void, ArrayList<Movie>>{
 
         private ArrayList<Movie> getMoviesPosterDataFromJson(String moviesJsonStr)
                 throws JSONException {
@@ -381,10 +372,10 @@ public class PosterDisplayFragment extends Fragment {
         }
     }
 
-
+*/
 
     // AsyncTask to display Favorite movies from database
-    public class FavoriteMovieDisplayTask extends  AsyncTask<Void ,Void,ArrayList<Movie>>{
+  /*  public class FavoriteMovieDisplayTask extends  AsyncTask<Void ,Void,ArrayList<Movie>>{
 
         private Context mContext;
 
@@ -435,5 +426,8 @@ public class PosterDisplayFragment extends Fragment {
         }
 
     }
+
+
+    */
 
 }

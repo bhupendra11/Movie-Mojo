@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Popular Movies I</string>
+    <string name="app_name">MovieMojo</string>
     <string name="action_settings">Settings</string>
     <string name="action_share">Share</string>
     <string name="title_activity_detail">DetailActivity</string>
