@@ -30,8 +30,8 @@ MyTMDBApiKey= "YOUR_TMDB_API_KEY_HERE"
 
 ##Libraries used:
 
-1. Picasso for handling download and caching of images.
-2. Retrofit as Rest-Client for fetching data from TMDB Api.
+1. [Picasso](http://square.github.io/picasso/) for handling download and caching of images.
+2. [Retrofit](http://square.github.io/retrofit/) as Rest-Client for fetching data from TMDB Api.
 3. [ButterKnife] (http://jakewharton.github.io/butterknife/)  for view binding.  
 
 
