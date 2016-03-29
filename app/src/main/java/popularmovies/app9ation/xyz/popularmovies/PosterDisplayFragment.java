@@ -11,12 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import popularmovies.app9ation.xyz.popularmovies.asyncTasks.FavoriteMovieDisplayTask;
-import popularmovies.app9ation.xyz.popularmovies.asyncTasks.FetchMovieDataTask;
 import popularmovies.app9ation.xyz.popularmovies.data.MovieContract;
+import popularmovies.app9ation.xyz.popularmovies.model.AllMovies;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -26,8 +31,16 @@ public class PosterDisplayFragment extends Fragment {
     private MovieAdapter movieAdapter;
     private Movie movie;
     private String FETCH_PARAM ="popular";
-    private  ArrayList<Movie> movieList = new ArrayList<Movie>();
+    //private  ArrayList<Movie> movieList = new ArrayList<Movie>();
     private boolean isSavedInstance =false;
+
+    private Call<AllMovies> callMovies;
+    private MovieService.TMDBApi tmdbApi;
+    private static final String API_BASE_URL = "http://api.themoviedb.org/3/";
+    private AllMovies allMovies;
+    private ArrayList<Movie> movieItems = new ArrayList<Movie>();
+
+    public static final String MOVIE_LIST = "MoviesList";
 
     private static final String[] Movie_COLUMNS = {
             //Array of all the column names in Movie table
@@ -72,11 +85,19 @@ public class PosterDisplayFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(savedInstanceState != null && savedInstanceState.containsKey("MoviesList")){
+        if(savedInstanceState != null && savedInstanceState.containsKey(MOVIE_LIST)){
             isSavedInstance= true;
-            movieList =savedInstanceState.getParcelableArrayList("MoviesList");
+            movieItems =savedInstanceState.getParcelableArrayList(MOVIE_LIST);
         }
         setHasOptionsMenu(true);
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(API_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        tmdbApi = retrofit.create(MovieService.TMDBApi.class);
+
     }
 
     @Override
@@ -137,7 +158,7 @@ public class PosterDisplayFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("MoviesList",movieList);
+        outState.putParcelableArrayList(MOVIE_LIST,movieItems);
         super.onSaveInstanceState(outState);
     }
 
@@ -145,16 +166,16 @@ public class PosterDisplayFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if(!isSavedInstance && movieList.isEmpty()) {
+        if(!isSavedInstance && movieItems.isEmpty()) {
             updateMovies(FETCH_PARAM);
         }
-        else if(movieList !=null) {
+        else if(movieItems !=null) {
 
             movieAdapter.clear();
 
             Movie curMovie;
-            for (int i = 0; i < movieList.size(); i++) {
-                curMovie = movieList.get(i);
+            for (int i = 0; i < movieItems.size(); i++) {
+                curMovie = movieItems.get(i);
                 movieAdapter.add(curMovie);
             }
 
@@ -163,16 +184,21 @@ public class PosterDisplayFragment extends Fragment {
 
     public void updateMovies(String sortType){
 
-        FetchMovieDataTask movieDataTask = new FetchMovieDataTask(getContext(), getActivity(), movieAdapter);
+        /*FetchMovieDataTask movieDataTask = new FetchMovieDataTask(getContext(), getActivity(), movieAdapter);
         movieList.clear();
         movieAdapter.notifyDataSetChanged();
-        movieDataTask.execute(sortType);
+        movieDataTask.execute(sortType);*/
+
+        getMovies(sortType);
+
+
+
     }
 
     public void displayFavorites(){
 
        FavoriteMovieDisplayTask favoriteMovieDisplayTask = new FavoriteMovieDisplayTask(getContext(),getActivity() , Movie_COLUMNS, movieAdapter);
-        movieList.clear();
+        movieItems.clear();
         movieAdapter.notifyDataSetChanged();
         favoriteMovieDisplayTask.execute();
 
@@ -186,5 +212,49 @@ public class PosterDisplayFragment extends Fragment {
        // movieAdapter.notifyDataSetChanged();
 
     }
+
+
+    public void getMovies(String sort) {
+
+
+        // For fetching all movies
+        callMovies = tmdbApi.getMovies(sort);
+
+        callMovies.enqueue(new retrofit2.Callback<AllMovies>() {
+            @Override
+            public void onResponse(Call<AllMovies> call, Response<AllMovies> response) {
+                allMovies = response.body();
+                movieItems = allMovies.getMovieList();
+
+
+                if(movieItems !=null) {
+
+                    movieAdapter.clear();
+
+                    Movie  curMovie;
+                    for (int i = 0; i < movieItems.size(); i++) {
+                        curMovie = movieItems.get(i);
+                        movieAdapter.add(curMovie);
+                    }
+
+                }
+                else{
+                    // Let the user know that some problem has occurred via a toast
+                    Toast.makeText(getContext(),getActivity().getString(R.string.no_movie_data_error) ,Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<AllMovies> call, Throwable t) {
+
+            }
+
+        });
+
+
+    }
+
+
 
 }

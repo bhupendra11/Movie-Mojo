@@ -47,7 +47,7 @@ public class IsFavoriteTask extends AsyncTask<Movie, Integer, Integer> {
                 MovieContract.MovieEntry.CONTENT_URI,
                 null,   //projection
                 MovieContract.MovieEntry.COLUMN_MOVIE_ID + " =?",
-                new String[]{String.valueOf(mMovie.getId())},      // selectionArgs : gets the rows with this movieID
+                new String[]{String.valueOf(mMovie.getMovieId())},      // selectionArgs : gets the rows with this movieID
                 null             // Sort order
 
         );

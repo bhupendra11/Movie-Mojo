@@ -156,13 +156,13 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
             movie = arguments.getParcelable(DetailActivityFragment.DETAIL_MOVIE);
 
-            movieID = movie.id;
-            movieTitle = movie.title;
-            backdropImagePath = movie.backdrop_path;
-            posterPath = movie.poster;
-            movieOverview = movie.overview;
-            movieYear = movie.release_year;
-            vote_avg = movie.vote_avg;
+            movieID = movie.getMovieId();
+            movieTitle = movie.getTitle();
+            backdropImagePath = movie.getBackdropPath();
+            posterPath = movie.getPosterPath();
+            movieOverview = movie.getOverview();
+            movieYear = movie.getReleaseMonthYear();
+            vote_avg = movie.getRating();
         }
 
 

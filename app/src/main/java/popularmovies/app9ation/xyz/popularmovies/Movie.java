@@ -4,90 +4,89 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
+import popularmovies.app9ation.xyz.popularmovies.util.Util;
+
 /**
  * Created by Bhupendra Shekhawat on 14/12/15.
  */
 public class Movie implements Parcelable{
 
 
-    Long id;
-    String poster;
-    String overview;
-    String title;
-    String backdrop_path;
-    String popularity;
-    String vote_avg;
-    String release_year;
+    @SerializedName("original_title")
+    private String mTitle;
+
+    @SerializedName("id")
+    private long mMovieId;
+
+    @SerializedName("release_date")
+    private String mReleaseDate;
+
+    @SerializedName("poster_path")
+    private String mPosterPath;
+
+    @SerializedName("backdrop_path")
+    private  String mBackdropPath;
+
+    @SerializedName("vote_average")
+    private String mRating;
+
+    @SerializedName("vote_count")
+    private int mVoteCount;
+
+    @SerializedName("overview")
+    private String mOverview;
+
+    @SerializedName("popularity")
+    private String mPopularity;
+
+
+    final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
+    final String POSTER_SIZE = "w185";
+    final String BACKDROP_SIZE = "w500";
+
+
+    String display_yearMonth;
 
 
 
     public Movie(Long id, String poster, String overview, String title, String backdrop_path, String popularity, String vote_avg,String release_year){
-        this.id = id;
-        this.poster = poster;
-        this.overview =overview;
-        this.title=title;
-        this.backdrop_path = backdrop_path;
-        this.popularity = popularity;
-        this.vote_avg = vote_avg;
-        this.release_year = release_year;
+        this.mMovieId = id;
+        this.mPosterPath = poster;
+        this.mOverview =overview;
+        this.mTitle=title;
+        this.mBackdropPath = backdrop_path;
+        this.mPopularity= popularity;
+        this.mRating = vote_avg;
+        this.mReleaseDate = release_year;
+
+
     }
 
     // get Movie object from Cursor
     public Movie(Cursor cursor) {
-        this.id = cursor.getLong(PosterDisplayFragment.COL_MOVIE_ID);
-        this.title = cursor.getString(PosterDisplayFragment.COL_TITLE);
-        this.poster = cursor.getString(PosterDisplayFragment.COL_POSTER);
-        this.backdrop_path = cursor.getString(PosterDisplayFragment.COL_BACKDROP);
-        this.overview = cursor.getString(PosterDisplayFragment.COL_OVERVIEW);
-        this.vote_avg = cursor.getString(PosterDisplayFragment.COL_RATING);
-        this.release_year = cursor.getString(PosterDisplayFragment.COL_DATE);
+        this.mMovieId = cursor.getLong(PosterDisplayFragment.COL_MOVIE_ID);
+        this.mTitle = cursor.getString(PosterDisplayFragment.COL_TITLE);
+        this.mPosterPath = cursor.getString(PosterDisplayFragment.COL_POSTER);
+        this.mBackdropPath = cursor.getString(PosterDisplayFragment.COL_BACKDROP);
+        this.mOverview = cursor.getString(PosterDisplayFragment.COL_OVERVIEW);
+        this.mRating = cursor.getString(PosterDisplayFragment.COL_RATING);
+        this.mReleaseDate = cursor.getString(PosterDisplayFragment.COL_DATE);
     }
 
-    private Movie(Parcel in){
-        id = in.readLong();
-        poster = in.readString();
-        overview = in.readString();
-        title =in.readString();
-        backdrop_path =in.readString();
-        popularity = in.readString() ;
-        vote_avg = in.readString();
-        release_year = in.readString();
+    protected Movie(Parcel in) {
 
+        mMovieId = in.readLong();
+        mTitle = in.readString();
+        mPosterPath = in.readString();
+        mBackdropPath = in.readString();
+        mReleaseDate = in.readString();
+        mRating = in.readString();
+        mVoteCount = in.readInt();
+        mOverview = in.readString();
+        mPopularity = in.readString();
     }
-
-    // getters for all movie properties
-    public Long getId() {
-        return id;
-    }
-
-    public String getPoster() {
-        return poster;
-    }
-
-    public String getOverview() {
-        return overview;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getBackdrop_path() {
-        return backdrop_path;
-    }
-
-    public String getPopularity() {
-        return popularity;
-    }
-
-    public String getVote_avg() {
-        return vote_avg;
-    }
-
-    public String getRelease_year() {
-        return release_year;
-    }
-
 
     @Override
     public int describeContents() {
@@ -95,17 +94,62 @@ public class Movie implements Parcelable{
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeLong(id);
-        parcel.writeString(poster);
-        parcel.writeString(overview);
-        parcel.writeString(title);
-        parcel.writeString(backdrop_path);
-        parcel.writeString(popularity);
-        parcel.writeString(vote_avg);
-        parcel.writeString(release_year);
+    public void writeToParcel(Parcel dest, int flags) {
 
+        dest.writeLong(mMovieId);
+        dest.writeString(mTitle);
+        dest.writeString(mPosterPath);
+        dest.writeString(mBackdropPath);
+        dest.writeString(mReleaseDate);
+        dest.writeString(mRating);
+        dest.writeInt(mVoteCount);
+        dest.writeString(mOverview);
+        dest.writeString(mPopularity);
     }
+
+
+    // getters for all movie properties
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public Long getMovieId() {
+        return mMovieId;
+    }
+
+    public String getReleaseMonthYear() {
+
+        display_yearMonth = Util.getMonthYear(mReleaseDate);
+
+        return display_yearMonth;
+    }
+
+    public String getPosterPath() {
+        return BASE_IMAGE_URL + POSTER_SIZE + mPosterPath;
+    }
+
+    public  String getBackdropPath(){
+        return BASE_IMAGE_URL + BACKDROP_SIZE + mBackdropPath;
+    }
+
+    public String getRating() {
+        return mRating;
+    }
+
+    public int getVoteCount() {
+        return mVoteCount;
+    }
+
+    public String getOverview() {
+        return mOverview;
+    }
+
+    public String getPopularity() {
+        return mPopularity;
+    }
+
+
+
 
     public static final Parcelable.Creator<Movie> CREATOR  = new Parcelable.Creator<Movie>()
     {

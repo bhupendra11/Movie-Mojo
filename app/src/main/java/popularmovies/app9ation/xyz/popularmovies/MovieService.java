@@ -1,5 +1,6 @@
 package popularmovies.app9ation.xyz.popularmovies;
 
+import popularmovies.app9ation.xyz.popularmovies.model.AllMovies;
 import popularmovies.app9ation.xyz.popularmovies.model.AllReviews;
 import popularmovies.app9ation.xyz.popularmovies.model.AllTrailers;
 import retrofit2.Call;
@@ -13,6 +14,13 @@ public class MovieService {
 
     public interface TMDBApi{
 
+        // To get all the movies and store them as MovieModel objects
+
+       @GET("movie/{sort}?api_key=" + BuildConfig.TMDB_API_KEY)
+        Call<AllMovies> getMovies(
+                @Path("sort") String sortCriteria
+        );
+
 
         // To get the trailers and store them as MovieTrailer objects
 
@@ -21,7 +29,7 @@ public class MovieService {
                 @Path("id") long movieID
               );
 
-        // To get the trailers and store them as MovieReview objects
+        // To get the trailers and store them as MovieTrailer objects
 
         @GET("movie/{id}/reviews?api_key=" + BuildConfig.TMDB_API_KEY)
         Call<AllReviews> getReviews(
@@ -29,7 +37,10 @@ public class MovieService {
                );
 
 
+
+
     }
+
 }
 
 

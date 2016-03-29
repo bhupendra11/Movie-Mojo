@@ -50,7 +50,7 @@ public class DealFavoritesTask extends AsyncTask<Movie, Integer, Integer> {
                 MovieContract.MovieEntry.CONTENT_URI,
                 null,   //projection
                 MovieContract.MovieEntry.COLUMN_MOVIE_ID + " =?",
-                new String[]{String.valueOf(mMovie.getId())},      // selectionArgs : gets the rows with this movieID
+                new String[]{String.valueOf(mMovie.getMovieId())},      // selectionArgs : gets the rows with this movieID
                 null             // Sort order
 
         );
@@ -67,7 +67,7 @@ public class DealFavoritesTask extends AsyncTask<Movie, Integer, Integer> {
             int delete = mContext.getContentResolver().delete(
                     MovieContract.MovieEntry.CONTENT_URI,
                     MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
-                    new String[]{Long.toString(mMovie.getId())}
+                    new String[]{Long.toString(mMovie.getMovieId())}
             );
 
             isFavorite = 0;
@@ -75,13 +75,13 @@ public class DealFavoritesTask extends AsyncTask<Movie, Integer, Integer> {
 
             ContentValues values = new ContentValues();
 
-            values.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, mMovie.getId());
+            values.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, mMovie.getMovieId());
             values.put(MovieContract.MovieEntry.COLUMN_TITLE, mMovie.getTitle());
-            values.put(MovieContract.MovieEntry.COLUMN_POSTER, mMovie.getPoster());
-            values.put(MovieContract.MovieEntry.COLUMN_BACKDROP, mMovie.getBackdrop_path());
+            values.put(MovieContract.MovieEntry.COLUMN_POSTER, mMovie.getPosterPath());
+            values.put(MovieContract.MovieEntry.COLUMN_BACKDROP, mMovie.getBackdropPath());
             values.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, mMovie.getOverview());
-            values.put(MovieContract.MovieEntry.COLUMN_RATING, mMovie.getVote_avg());
-            values.put(MovieContract.MovieEntry.COLUMN_DATE, mMovie.getRelease_year());
+            values.put(MovieContract.MovieEntry.COLUMN_RATING, mMovie.getRating());
+            values.put(MovieContract.MovieEntry.COLUMN_DATE, mMovie.getReleaseMonthYear());
 
             mContext.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, values);
 

@@ -16,7 +16,9 @@ import java.util.List;
  * Created by  Bhupendra Shekhawat on 14/12/15.
  */
 public class MovieAdapter extends ArrayAdapter<Movie>
-    {  public MovieAdapter(Activity context, List<Movie> moviePosters){
+    {
+
+        public MovieAdapter(Activity context, List<Movie> moviePosters){
 
             super(context,0, moviePosters);
 
@@ -27,7 +29,7 @@ public class MovieAdapter extends ArrayAdapter<Movie>
             Movie movie = getItem(position);
             ViewHolder viewHolder = new ViewHolder();
 
-            String posterUrl = movie.poster;
+            String posterUrl = movie.getPosterPath();
 
 
             if (convertView == null) {
