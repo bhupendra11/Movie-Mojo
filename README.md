@@ -10,9 +10,6 @@ Use this api key in your gradle.properties file as:
 
 MyTMDBApiKey= "YOUR_TMDB_API_KEY_HERE"
 
-![App demo GIF] (https://cloud.githubusercontent.com/assets/6179888/12053298/95b2ba2e-af3d-11e5-8405-5b87bec5e643.gif)
-
-
 ##App Specifications:
 
 1. App uses TMDB Api to fetch the data.
@@ -20,7 +17,7 @@ MyTMDBApiKey= "YOUR_TMDB_API_KEY_HERE"
 3. There is toggle option to see "Popular Movies" , "Highest Rated Movies" and "Favorite Movies".
 4. "Favorite Movies " are movies saved offline using Content Providers.
 5. The detail view shows:
-        1.Movie Synopsis
+        ..*Movie Synopsis
         2.Poster
         3.Rating
         4. Trailers (in horizontal scrollview)
@@ -34,5 +31,5 @@ MyTMDBApiKey= "YOUR_TMDB_API_KEY_HERE"
 2. [Retrofit](http://square.github.io/retrofit/) as Rest-Client for fetching data from TMDB Api.
 3. [ButterKnife] (http://jakewharton.github.io/butterknife/)  for view binding.  
 
-
+![App demo Gif](moviemojo_online-video-cutter.gif)
 
