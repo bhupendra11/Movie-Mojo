@@ -15,11 +15,11 @@ MyTMDBApiKey= "YOUR_TMDB_API_KEY_HERE"
 3. There is toggle option to see "Popular Movies" , "Highest Rated Movies" and "Favorite Movies".
 4. **Favorite Movies** are movies saved offline using Content Providers.
 5. The detail view shows:
-* Movie Synopsis
-*Poster
-*Rating
-* Trailers (in horizontal scrollview)
-* Reviews.
+        a. Movie Synopsis
+        b. Poster
+        c. Rating
+        d. Trailers (in horizontal scrollview)
+        e. Reviews.
 6. A button to mark a movie favorite is present in detail View.
 
 
