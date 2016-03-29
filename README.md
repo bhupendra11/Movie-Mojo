@@ -13,7 +13,7 @@ MyTMDBApiKey= "YOUR_TMDB_API_KEY_HERE"
 ![App demo GIF] (https://cloud.githubusercontent.com/assets/6179888/12053298/95b2ba2e-af3d-11e5-8405-5b87bec5e643.gif)
 
 
-App Specifications:
+##App Specifications:
 
 1. App uses TMDB Api to fetch the data.
 2. The main layout shows recent popular movies.
@@ -28,11 +28,11 @@ App Specifications:
 6. A button to mark a movie favorite is present in detail View.
 
 
-Libraries used:
+##Libraries used:
 
 1. Picasso for handling download and caching of images.
 2. Retrofit as Rest-Client for fetching data from TMDB Api.
-3. Buttorknife ![ButterKnife] (http://jakewharton.github.io/butterknife/) for view binding.  
+3. Butterknife for view binding.  
 
 
 
