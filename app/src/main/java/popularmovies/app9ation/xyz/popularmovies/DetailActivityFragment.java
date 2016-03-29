@@ -27,6 +27,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import popularmovies.app9ation.xyz.popularmovies.MovieService.TMDBApi;
 import popularmovies.app9ation.xyz.popularmovies.asyncTasks.DealFavoritesTask;
 import popularmovies.app9ation.xyz.popularmovies.asyncTasks.IsFavoriteTask;
@@ -57,9 +59,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
     // Made movie object static so that it can be accessed in  MainActivity's (onRestoreInstanceState) in two-pane UI after onSaveInstanceState call in DetailActivityFragment
     public static Movie movie;
-    private ScrollView mDetailLayout;
-    public Button favButton;
-
 
     //For fething and storing data in detailFragment
     private static final String API_BASE_URL = "http://api.themoviedb.org/3/";
@@ -70,11 +69,9 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     private AllReviews allReviews;
     private List<AllReviews.MovieReview> reviewItems = new ArrayList<MovieReview>();
     private TMDBApi tmdbApi;
-    private View rootView;
 
 
     private Context mContext;
-
     static String DETAIL_MOVIE = "Detail_Movie";
     private Toast mToast;
 
@@ -84,14 +81,26 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
     public static String mShareStr;
     private MovieTrailer mTrailer;
 
-    //For the UI of reviews and trailers
+    //For the UI
+    private View rootView;
+    @Bind(R.id.detail_layout) ScrollView mDetailLayout;
+    @Bind(R.id.fav_Button) Button favButton;
+    @Bind(R.id.reviews)ViewGroup mReviewsView;
+    @Bind(R.id.reviews_heading_textview) TextView mReviewsHeader;
+    @Bind(R.id.trailer_container) HorizontalScrollView mTrailersScrollView;
+    @Bind(R.id.trailers_heading_textview) TextView mTrailersHeader;
+    @Bind(R.id.trailers) ViewGroup mTrailersView;
 
-    ViewGroup mReviewsView;
-    TextView mReviewsHeader;
+    @Bind(R.id.backdropPoster_image) ImageView backdropPosterView;
+    @Bind(R.id.moviePoster_image) ImageView smallPosterView;
+    @Bind(R.id.movie_overview_textView) TextView movieOverviewTextview;
+    @Bind(R.id.movieName_textView) TextView movieTitleTextView;
+    @Bind(R.id.movieYear_textView) TextView movieYearTextView;
+    @Bind(R.id.rating_textView) TextView movieRatingTextView;
 
-    HorizontalScrollView mTrailersScrollView;
-    TextView mTrailersHeader;
-    ViewGroup mTrailersView;
+/*
+    @Bind(R.id.review_author_textView) TextView reviewAuthor ;
+    @Bind(R.id.review_content_textView) TextView reviewContent;*/
 
 
     //For checking if Movie in Favorites
@@ -131,6 +140,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
         shareIntent.putExtra(Intent.EXTRA_TEXT, mShareStr +" \n"+ MOVIE_SHARE_HASHTAG);
         return  shareIntent;
+
     }
 
     @Override
@@ -158,8 +168,9 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
 
         rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        mDetailLayout = (ScrollView) rootView.findViewById(R.id.detail_layout);
 
+        // Use butterKnife library
+        ButterKnife.bind(this,rootView);
 
         if (movie != null) {
             mDetailLayout.setVisibility(View.VISIBLE);
@@ -171,31 +182,17 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         getActivity().setTitle(movieTitle);
 
 
-        ImageView backdropPosterView = (ImageView) rootView.findViewById(R.id.backdropPoster_image);
-
-        ImageView smallPosterView = (ImageView) rootView.findViewById(R.id.moviePoster_image);
-
         backdropPosterView.setAdjustViewBounds(true);
         backdropPosterView.setPadding(0, 0, 0, 0);
 
         Picasso.with(getContext()).load(backdropImagePath).placeholder(R.drawable.backdrop_placeholder).fit().into(backdropPosterView);
-
-
         Picasso.with(getContext()).load(posterPath).placeholder(R.drawable.small_poster_placeholder).fit().into(smallPosterView);
 
-        TextView movieOverviewTextview = (TextView) rootView.findViewById(R.id.movie_overview_textView);
         movieOverviewTextview.setText(movieOverview);
-
-        TextView movieTitleTextView = (TextView) rootView.findViewById(R.id.movieName_textView);
         movieTitleTextView.setText(movieTitle);
-
-        TextView movieYearTextView = (TextView) rootView.findViewById(R.id.movieYear_textView);
         movieYearTextView.setText(movieYear);
-
-        TextView movieRatingTextView = (TextView) rootView.findViewById(R.id.rating_textView);
         movieRatingTextView.setText(vote_avg);
 
-        Button favButton = (Button) rootView.findViewById(R.id.fav_Button);
 
         // For textview transitions
 
@@ -229,6 +226,7 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                     // saw, so each animation starts a bit after the previous one
                     .setStartDelay(300 + 75 * i)
                     .start();
+
         }
 
 
@@ -241,15 +239,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                 .build();
 
         tmdbApi = retrofit.create(TMDBApi.class);
-
-       /* //To wait till onAttach is called
-        while (!onAttachDone) {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-              //do nothing
-            }
-        }*/
 
         // Used to set The star for Favorite status
 
@@ -339,9 +328,9 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                 }
 
 
-                mTrailersHeader = (TextView) rootView.findViewById(R.id.trailers_heading_textview);
-                mTrailersScrollView = (HorizontalScrollView) rootView.findViewById(R.id.trailer_container);
-                mTrailersView = (ViewGroup) rootView.findViewById(R.id.trailers);
+               // mTrailersHeader = (TextView) rootView.findViewById(R.id.trailers_heading_textview);
+               // mTrailersScrollView = (HorizontalScrollView) rootView.findViewById(R.id.trailer_container);
+              //  mTrailersView = (ViewGroup) rootView.findViewById(R.id.trailers);
 
                 boolean hasTrailers = !trailerItems.isEmpty();
                 mTrailersHeader.setVisibility(hasTrailers ? View.VISIBLE : View.GONE);
@@ -374,8 +363,8 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
                 allReviews = response.body();
                 reviewItems = allReviews.getReviewsList();
 
-                mReviewsHeader = (TextView) rootView.findViewById(R.id.reviews_heading_textview);
-                mReviewsView = (ViewGroup) rootView.findViewById(R.id.reviews);
+               // mReviewsHeader = (TextView) rootView.findViewById(R.id.reviews_heading_textview);
+                //mReviewsView = (ViewGroup) rootView.findViewById(R.id.reviews);
 
                 boolean hasReviews = !reviewItems.isEmpty();
                 mReviewsHeader.setVisibility(hasReviews ? View.VISIBLE : View.GONE);
@@ -442,7 +431,6 @@ public class DetailActivityFragment extends Fragment implements  View.OnClickLis
         for (MovieReview review : reviews) {
             ViewGroup reviewContainer = (ViewGroup) inflater.inflate(R.layout.reviews_item, mReviewsView,
                     false);
-
 
             TextView reviewAuthor = (TextView) reviewContainer.findViewById(R.id.review_author_textView);
             TextView reviewContent = (TextView) reviewContainer.findViewById(R.id.review_content_textView);
