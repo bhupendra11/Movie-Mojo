@@ -1,5 +1,6 @@
-# Popular-Movies-I
-Popular Movies I is a movies discovery app. This is the first Project for Androidd developer Nanodegree
+# Popular-Movies
+Popular Movies  is a movies discovery app. This is the second Project for Androidd developer Nanodegree.
+The first project was a primitive version of the same app.
 
 INSTALLATION:
 
