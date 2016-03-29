@@ -32,7 +32,7 @@ MyTMDBApiKey= "YOUR_TMDB_API_KEY_HERE"
 
 1. Picasso for handling download and caching of images.
 2. Retrofit as Rest-Client for fetching data from TMDB Api.
-3. Butterknife for view binding.  
+3. [ButterKnife] (http://jakewharton.github.io/butterknife/)  for view binding.  
 
 
 
