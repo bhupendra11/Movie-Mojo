@@ -20,7 +20,7 @@
     <string name="movie_add_to_favorites" > Movie successfully added to your favorites </string>
     <string name="movie_removed_from_favorites">Movie successfully removed from your favorites</string>
 
-    <string name="content_authority" >popularmovies.app9ation.xyz.popularmovies</string>
+    <string name="content_authority" >moviemojo.bhupendra.xyz.moviemojo</string>
 
 
 </resources>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="popularmovies.app9ation.xyz.popularmovies.MainActivity">
+    tools:context="moviemojo.bhupendra.xyz.moviemojo.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -32,7 +32,7 @@
         android:baselineAligned="false"
         android:divider="?android:attr/dividerHorizontal"
         android:orientation="horizontal"
-        tools:context="sunny.app9ation.xyz.sunny.MainActivity"
+        tools:context="sunny.bhupendra.xyz.sunny.MainActivity"
         android:layout_marginTop="65dp">
 
         <!--
@@ -42,7 +42,7 @@
 
         <fragment
             android:id="@+id/fragment_movie_poster"
-            android:name="popularmovies.app9ation.xyz.popularmovies.PosterDisplayFragment"
+            android:name="moviemojo.bhupendra.xyz.moviemojo.PosterDisplayFragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"

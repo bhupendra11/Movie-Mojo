@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="popularmovies.app9ation.xyz.popularmovies.MainActivity">
+    tools:context="moviemojo.bhupendra.xyz.moviemojo.moviemojo.bhupendra.xyz.popularmovies.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
 
 
         <android.support.v7.widget.Toolbar
-            android:logo="@mipmap/icon_launcher"
+            android:logo="@mipmap/ic_launcher"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:elevation="4dp"

@@ -9,7 +9,7 @@
     android:verticalSpacing="0dp"
     android:horizontalSpacing="0dp"
     android:stretchMode="columnWidth"
-    tools:context=".PosterDisplayFragment"
+    tools:context="moviemojo.bhupendra.xyz.moviemojo.PosterDisplayFragment"
     tools:backgroung="#abcdef"
     android:layout_marginTop="50dp"
     android:id="@+id/posters_grid">

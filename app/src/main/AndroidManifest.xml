@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="popularmovies.app9ation.xyz.popularmovies">
+    package="moviemojo.bhupendra.xyz.moviemojo">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/icon_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="moviemojo.bhupendra.xyz.moviemojo.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -21,13 +21,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DetailActivity"
+            android:name="moviemojo.bhupendra.xyz.moviemojo.DetailActivity"
             android:label="@string/title_activity_detail"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="moviemojo.bhupendra.xyz.moviemojo.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="popularmovies.app9ation.xyz.popularmovies.MainActivity" />
+                android:value="moviemojo.bhupendra.xyz.moviemojo.MainActivity" />
         </activity>
 
         <!-- Content Provider for saving favorite movies -->
@@ -35,7 +35,7 @@
          <provider
              android:authorities="@string/content_authority"
              android:multiprocess="true"
-             android:name=".data.MovieProvider"/>
+             android:name="moviemojo.bhupendra.xyz.moviemojo.data.MovieProvider"/>
 
         <!-- CheckMovieInFavoriteService -->
 
