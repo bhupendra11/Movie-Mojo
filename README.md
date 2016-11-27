@@ -8,7 +8,7 @@ Use this api key in your gradle.properties file as:
 
 MyTMDBApiKey= "YOUR_TMDB_API_KEY_HERE"
 
-##App Specifications:
+##Features :
 
 1. App uses TMDB Api to fetch the data.
 2. The main layout shows recent popular movies.
@@ -23,7 +23,7 @@ MyTMDBApiKey= "YOUR_TMDB_API_KEY_HERE"
 6. A button to mark a movie favorite is present in detail View.
 
 
-##Libraries used:
+##Libraries used :
 
 1. [Picasso](http://square.github.io/picasso/) for handling download and caching of images.
 2. [Retrofit](http://square.github.io/retrofit/) as Rest-Client for fetching data from TMDB Api.
